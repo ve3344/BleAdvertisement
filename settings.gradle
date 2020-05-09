@@ -1,0 +1,3 @@
+rootProject.name = 'BleAdvertisement'
+include 'bluez-dbus'
+

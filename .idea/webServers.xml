@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="2feb7237-8b44-49b3-b954-b7d8644f947e" name="pi">
+        <fileTransfer rootFolder="/home/pi/Projects/BleAdv" accessType="SFTP" host="192.168.43.115" port="22" sshConfigId="0ddd0d83-4ad9-48e7-ad6c-59c64d717124" sshConfig="pi@192.168.43.115:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
