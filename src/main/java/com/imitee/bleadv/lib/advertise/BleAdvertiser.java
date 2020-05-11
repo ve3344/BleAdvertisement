@@ -87,14 +87,10 @@ public class BleAdvertiser implements ObjectManager {
         return services;
     }
 
-    public List<String> getConnectedDeviceNodes() {
-       return connector.findDevices();
-    }
+
 
     public void disconnectAllDevices() {
-        connector.findDevices()
-                .stream()
-                .forEach(path -> {
+        connector.findDevices().forEach(path -> {
                     try {
                         adapter.removeDevice(new DBusPath(path));
                     } catch (BluezFailedException | BluezInvalidArgumentsException e) {
@@ -118,6 +114,7 @@ public class BleAdvertiser implements ObjectManager {
         return advertisement != null;
     }
 
+    @SuppressWarnings("all")
     public void startAdvertise() throws AdvertiseException {
         if (isAdvertising()) {
             System.out.println("already start");
@@ -132,6 +129,7 @@ public class BleAdvertiser implements ObjectManager {
                 .filter(BleService::isPrimary)
                 .findFirst()
                 .get();
+        //checkValid()检查过了，这里primaryService一定不为null
         List<BleService> primaryServiceList=new ArrayList<>();
         primaryServiceList.add(primaryService);
 
@@ -165,7 +163,6 @@ public class BleAdvertiser implements ObjectManager {
 
         if (!hasPrimary){
             throw new AdvertiseException("Primary service not found!");
-
         }
 
         /*for (BleService service : services) {

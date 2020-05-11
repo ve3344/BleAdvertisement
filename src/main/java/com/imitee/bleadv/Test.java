@@ -1,10 +1,7 @@
 package com.imitee.bleadv;
 
 
-import com.imitee.bleadv.dbus.adapters.DbusConvertAdapter;
-import com.imitee.bleadv.dbus.core.ModelMaker;
 import com.imitee.bleadv.dbus.test.Tester;
-import com.imitee.bleadv.lib.models.BleAdapter;
 import com.imitee.bleadv.lib.advertise.BleAdvertiser;
 import com.imitee.bleadv.lib.base.AdvertiseType;
 import com.imitee.bleadv.lib.base.BusConnector;
@@ -12,9 +9,9 @@ import com.imitee.bleadv.lib.base.ConnectionListener;
 import com.imitee.bleadv.lib.builder.AdvertiseBuilder;
 import com.imitee.bleadv.lib.builder.CharacteristicBuilder;
 import com.imitee.bleadv.lib.builder.ServiceBuilder;
+import com.imitee.bleadv.lib.models.BleAdapter;
 import com.imitee.bleadv.lib.models.BleDevice;
 
-import org.bluez.Adapter1;
 import org.bluez.Device1;
 import org.freedesktop.Hexdump;
 import org.freedesktop.dbus.exceptions.DBusException;
@@ -42,17 +39,19 @@ public class Test {
         BusConnector.init();
 
         BusConnector connector = BusConnector.getInstance();
+
         List<String> adapters = connector.findAdapters();
 
-        BleAdapter adapter = connector.makeModel(BleAdapter.class,adapters.get(0));
+        BleAdapter adapter = connector.makeModel(BleAdapter.class, adapters.get(0));
 
-        BleAdvertiser advertiser = getBuild(connector,adapter);
+        BleAdvertiser advertiser = getBuild(connector, adapter);
 
 
         adapter.setPowered(true);
         adapter.setDiscoverable(true);
         adapter.setDiscoverableTimeout(0);
         advertiser.disconnectAllDevices();
+
 
         try {
             advertiser.startAdvertise();
@@ -79,13 +78,14 @@ public class Test {
         Tester.testCallAll(bleAdapter);
         System.exit(0);
     }
+
     private static void testBleDevice(BleDevice bleDevice) {
         Tester.testCallAll(bleDevice);
         System.exit(0);
     }
 
     private static BleAdvertiser getBuild(BusConnector connector, BleAdapter adapter) {
-        return new AdvertiseBuilder(adapter,"/bttest")
+        return new AdvertiseBuilder(adapter, "/bttest")
                 .addService(new ServiceBuilder(SERVICE_UUID1)
                         .setPrimary(true)
                         .addCharacteristic(new CharacteristicBuilder(CHARACTERISTIC_UUID1)
@@ -131,32 +131,6 @@ public class Test {
                 .setAdvertiseType(AdvertiseType.BROADCAST)
                 .setAdvertiseBleName("adddd")
                 .build();
-    }
-
-    private static void printMap(Map<?, ?> map, int level) {
-        System.out.println("{");
-        for (Map.Entry<?, ?> entry : map.entrySet()) {
-            for (int i = 0; i < level; i++) {
-                System.out.print("\t");
-            }
-            Object key = entry.getKey();
-            System.out.printf("%-30s -> ", key.toString());
-
-            Object value = entry.getValue();
-            if (value instanceof Map) {
-                printMap((Map) value, level + 1);
-            } else {
-                System.out.print(value.toString());
-            }
-            System.out.println();
-
-
-        }
-        System.out.println();
-        for (int i = 0; i < level; i++) {
-            System.out.print("\t");
-        }
-        System.out.println("}");
     }
 
 
