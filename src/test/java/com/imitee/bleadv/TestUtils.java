@@ -1,4 +1,4 @@
-package com.imitee.bleadv.dbus.test;
+package com.imitee.bleadv;
 
 import java.util.Map;
 

@@ -1,7 +1,6 @@
 package com.imitee.bleadv;
 
 
-import com.imitee.bleadv.dbus.test.JsonUtils;
 import com.imitee.bleadv.dbus.test.Tester;
 import com.imitee.bleadv.lib.advertise.BleAdvertiser;
 import com.imitee.bleadv.lib.base.AdvertiseType;
@@ -27,7 +26,7 @@ import java.util.Map;
  * @author: luo
  * @create: 2020-05-08 14:19
  **/
-public class Test {
+public class Demo {
     public static final String SERVICE_UUID1 = "13333333-3333-3333-3333-33333333300a";
     public static final String SERVICE_UUID2 = "13333333-3333-3333-3333-33333333300b";
     public static final String SERVICE_UUID3 = "13333333-3333-3333-3333-33333333300c";

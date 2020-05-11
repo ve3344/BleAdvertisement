@@ -129,7 +129,7 @@ public class BleAdvertiser implements ObjectManager {
                 .filter(BleService::isPrimary)
                 .findFirst()
                 .get();
-        //checkValid()检查过了，这里primaryService一定不为null
+        //checked in checkValid() , primaryService must not be null
         List<BleService> primaryServiceList=new ArrayList<>();
         primaryServiceList.add(primaryService);
 

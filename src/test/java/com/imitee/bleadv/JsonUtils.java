@@ -1,9 +1,8 @@
-package com.imitee.bleadv.dbus.test;
+package com.imitee.bleadv;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.freedesktop.dbus.DBusPath;
 
 import java.util.HashMap;
 import java.util.Map;

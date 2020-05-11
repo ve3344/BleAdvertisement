@@ -1,0 +1,30 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+    classifier 'sources'
+}
+task javadocJar(type: Jar) {
+    from javadoc
+    classifier  'javadoc'
+}
+
+group 'com.imitee'
+version '0.0.1'
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+publishing {
+    publications {
+
+        library(MavenPublication) {
+            from components.java
+            artifact sourceJar
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
+}
