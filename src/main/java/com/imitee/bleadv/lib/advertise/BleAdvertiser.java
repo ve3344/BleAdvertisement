@@ -165,7 +165,7 @@ public class BleAdvertiser implements ObjectManager {
             throw new AdvertiseException("Primary service not found!");
         }
 
-        /*for (BleService service : services) {
+        for (BleService service : services) {
             List<BleCharacteristic> characteristics = service.getCharacteristics();
             for (BleCharacteristic characteristic : characteristics) {
                 if (characteristic.getFlags().length == 0) {
@@ -173,7 +173,7 @@ public class BleAdvertiser implements ObjectManager {
                 }
             }
 
-        }*/
+        }
     }
 
     private void initSignalHandler() {
