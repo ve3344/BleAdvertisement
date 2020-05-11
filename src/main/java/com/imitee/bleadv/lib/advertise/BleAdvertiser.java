@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author: luo
@@ -189,7 +188,7 @@ public class BleAdvertiser implements ObjectManager {
             Map<String, Variant<?>> device = added.getInterfaces().get(BleConstants.TYPE_DEVICE);
             if (device != null) {
                 Device1 object = connector.getObject(added.getSignalSource(), Device1.class);
-                connectionListener.onDeviceDiscovered(object, device);
+                connectionListener.onDeviceConnected(object, device);
             }
         };
 
@@ -201,7 +200,7 @@ public class BleAdvertiser implements ObjectManager {
             for (String inters : removed.getInterfaces()) {
                 if (inters.equals(BleConstants.TYPE_DEVICE)) {
                     Device1 object = connector.getObject(removed.getSignalSource(), Device1.class);
-                    connectionListener.onDeviceRemoved(object);
+                    connectionListener.onDeviceDisconnected(object);
                 }
             }
         };

@@ -1,6 +1,10 @@
 package com.imitee.bleadv.lib.base;
 
 
+import com.imitee.bleadv.dbus.adapters.DbusConvertAdapter;
+import com.imitee.bleadv.dbus.annotation.DbusObject;
+import com.imitee.bleadv.dbus.core.ModelMaker;
+
 import org.bluez.Adapter1;
 import org.bluez.Device1;
 import org.freedesktop.dbus.DBusPath;
@@ -62,7 +66,7 @@ public class BusConnector {
     }
 
 
-    public <T extends DBusInterface> T getObject(String path, Class<T> tClass)  {
+    public <T extends DBusInterface> T getObject(String path, Class<T> tClass) {
         try {
             return connection.getRemoteObject(busName, path, tClass);
         } catch (DBusException e) {
@@ -70,10 +74,9 @@ public class BusConnector {
         }
     }
 
-    public <T extends DBusInterface> T getObject(DBusPath path, Class<T> tClass)  {
+    public <T extends DBusInterface> T getObject(DBusPath path, Class<T> tClass) {
         return getObject(path.getPath(), tClass);
     }
-
 
 
     public void exportObject(DBusInterface obj) throws DBusException {
@@ -104,6 +107,7 @@ public class BusConnector {
     public ObjectManager requireObjectManager() throws DBusException {
         return requireObject(BleConstants.PATH_OBJ_MANAGER, ObjectManager.class);
     }
+
     public Map<DBusPath, Map<String, Map<String, Variant<?>>>> getManagedObjects() {
         try {
             ObjectManager objectManager = requireObjectManager();
@@ -112,7 +116,6 @@ public class BusConnector {
             return new HashMap<>();
         }
     }
-
 
 
     public List<String> findAdapters() {
@@ -133,4 +136,18 @@ public class BusConnector {
                 .collect(Collectors.toList());
     }
 
+    private ModelMaker modelMaker = new ModelMaker().setConvertAdapter(new DbusConvertAdapter());
+
+    public <T> T makeModel(Class<T> rClass, DBusInterface object) throws DBusException {
+        return modelMaker.makeObject(rClass, object);
+    }
+
+    public <T> T makeModel(Class<T> rClass, String path) throws DBusException {
+        DbusObject dbusObject = rClass.getAnnotation(DbusObject.class);
+        if (dbusObject == null) {
+            throw new IllegalArgumentException("This class must be annotated with DbusObject");
+        }
+        Class<? extends DBusInterface> value = dbusObject.value();
+        return modelMaker.makeObject(rClass, requireObject(path, value));
+    }
 }

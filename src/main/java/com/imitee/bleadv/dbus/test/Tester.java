@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.stream.Stream;
 
 /**
  * @author: luo
@@ -27,13 +26,14 @@ public class Tester {
 
 
     public static void testCallAll(Object object) {
-        Class aClass = object.getClass();
+        Class aClass = object.getClass().getInterfaces()[0];
         Method[] declaredMethods = aClass.getDeclaredMethods();
         System.out.println("----------------------");
         System.out.printf("Testing call %d methods [%s] %n", declaredMethods.length, aClass);
 
         List<Method> succeeds = new ArrayList<>();
         List<Method> fails = new ArrayList<>();
+        List<Method> warming = new ArrayList<>();
 
         int index = 0;
         for (Method declaredMethod : declaredMethods) {
@@ -52,7 +52,7 @@ public class Tester {
                 LinuxColorUtils.clear();
 
                 succeeds.add(declaredMethod);
-            }catch (HandleInvocationException e){
+            } catch (HandleInvocationException e) {
                 StringBuilder sb = new StringBuilder();
                 Throwable cause = e;
                 while ((cause = cause.getCause()) != null) {
@@ -65,30 +65,32 @@ public class Tester {
                 fails.add(declaredMethod);
             } catch (Throwable e) {
                 LinuxColorUtils.fg(LinuxColorUtils.GREEN);
-                System.out.println(" ---> [ok] but throws :"+e.getCause());
+                System.out.println(" ---> [ok] ");
+                LinuxColorUtils.fg(LinuxColorUtils.YELLOW);
+                System.out.println("\t\tbut throws :" + e.getCause());
                 LinuxColorUtils.clear();
 
-                succeeds.add(declaredMethod);
+                warming.add(declaredMethod);
 
             }
         }
-        System.out.printf("succeed:%d , fail:%d ,total:%d  %n", succeeds.size(), fails.size(), declaredMethods.length);
+        System.out.printf("succeed:%d , fail:%d ,warming:%d ,total:%d  %n", succeeds.size(), fails.size(), warming.size(), declaredMethods.length);
         System.out.println("----------------------");
 
     }
 
     private static String getMethodName(Method method) {
-        StringBuilder sb=new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 
         sb.append(method.getReturnType().getSimpleName());
         sb.append(" ");
         sb.append(method.getName());
         sb.append("(");
-        int index=0;
+        int index = 0;
         for (Class<?> parameterType : method.getParameterTypes()) {
-            if (index==0){
+            if (index == 0) {
                 sb.append(parameterType.getSimpleName());
-            }else {
+            } else {
                 sb.append(",");
                 sb.append(parameterType.getSimpleName());
             }

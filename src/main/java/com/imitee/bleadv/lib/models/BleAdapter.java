@@ -40,7 +40,7 @@ public interface BleAdapter {
     String getAddress();
 
     @PropertyOperation(name = "UUIDs")
-    List<String> getUuids();
+    List<String> getUUIDs();
 
     @PropertyOperation()
     String getName();

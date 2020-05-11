@@ -88,7 +88,7 @@ public class ObjectHandler<T> implements InvocationHandler {
             return handleObjectOperation(proxy, method, args, objectOperation);
         }
 
-        System.out.println("Warning:skipping method:"+method);
+//        System.out.println("Warning:skipping method:"+method);
         return null;
 
 

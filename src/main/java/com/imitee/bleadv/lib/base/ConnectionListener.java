@@ -6,6 +6,6 @@ import org.freedesktop.dbus.types.Variant;
 import java.util.Map;
 
 public interface ConnectionListener {
-	void onDeviceDiscovered(Device1 dev, Map<String, Variant<?>> options);
-	void onDeviceRemoved(Device1 dev);
+	void onDeviceConnected(Device1 dev, Map<String, Variant<?>> options);
+	void onDeviceDisconnected(Device1 dev);
 }

@@ -12,6 +12,7 @@ import com.imitee.bleadv.lib.base.ConnectionListener;
 import com.imitee.bleadv.lib.builder.AdvertiseBuilder;
 import com.imitee.bleadv.lib.builder.CharacteristicBuilder;
 import com.imitee.bleadv.lib.builder.ServiceBuilder;
+import com.imitee.bleadv.lib.models.BleDevice;
 
 import org.bluez.Adapter1;
 import org.bluez.Device1;
@@ -43,19 +44,9 @@ public class Test {
         BusConnector connector = BusConnector.getInstance();
         List<String> adapters = connector.findAdapters();
 
+        BleAdapter adapter = connector.makeModel(BleAdapter.class,adapters.get(0));
 
-        Adapter1 adapter1=connector.requireObject(adapters.get(0), Adapter1.class);
-
-        BleAdapter adapter =new ModelMaker()
-                .setConvertAdapter(new DbusConvertAdapter())
-                .makeObject(BleAdapter.class,adapter1);
-
-        //test(adapter);
-
-
-
-
-        BleAdvertiser advertiser = getBuild(adapter);
+        BleAdvertiser advertiser = getBuild(connector,adapter);
 
 
         adapter.setPowered(true);
@@ -84,13 +75,16 @@ public class Test {
         }
     }
 
-    private static void test(BleAdapter bleAdapter) throws DBusException {
-
+    private static void testBleAdapter(BleAdapter bleAdapter) {
         Tester.testCallAll(bleAdapter);
         System.exit(0);
     }
+    private static void testBleDevice(BleDevice bleDevice) {
+        Tester.testCallAll(bleDevice);
+        System.exit(0);
+    }
 
-    private static BleAdvertiser getBuild(BleAdapter adapter) {
+    private static BleAdvertiser getBuild(BusConnector connector, BleAdapter adapter) {
         return new AdvertiseBuilder(adapter,"/bttest")
                 .addService(new ServiceBuilder(SERVICE_UUID1)
                         .setPrimary(true)
@@ -117,13 +111,21 @@ public class Test {
                 )
                 .setConnectionListener(new ConnectionListener() {
                     @Override
-                    public void onDeviceDiscovered(Device1 dev, Map<String, Variant<?>> options) {
-                        System.out.println("onDeviceDiscovered");
+                    public void onDeviceConnected(Device1 dev, Map<String, Variant<?>> options) {
+                        System.out.println("onDeviceConnected");
+                        BleDevice bleDevice = null;
+                        try {
+                            bleDevice = connector.makeModel(BleDevice.class, dev);
+
+
+                        } catch (DBusException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                     @Override
-                    public void onDeviceRemoved(Device1 dev) {
-                        System.out.println("onDeviceRemoved");
+                    public void onDeviceDisconnected(Device1 dev) {
+                        System.out.println("onDeviceDisconnected");
                     }
                 })
                 .setAdvertiseType(AdvertiseType.BROADCAST)
