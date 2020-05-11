@@ -1,6 +1,7 @@
 package com.imitee.bleadv;
 
 
+import com.imitee.bleadv.dbus.test.JsonUtils;
 import com.imitee.bleadv.dbus.test.Tester;
 import com.imitee.bleadv.lib.advertise.BleAdvertiser;
 import com.imitee.bleadv.lib.base.AdvertiseType;
@@ -117,6 +118,7 @@ public class Test {
                         try {
                             bleDevice = connector.makeModel(BleDevice.class, dev);
 
+                            System.out.println(JsonUtils.mapToJson(connector.getManagedObjects()));
 
                         } catch (DBusException e) {
                             e.printStackTrace();

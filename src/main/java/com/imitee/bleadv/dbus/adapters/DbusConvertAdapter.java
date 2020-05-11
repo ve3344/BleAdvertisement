@@ -1,9 +1,6 @@
 package com.imitee.bleadv.dbus.adapters;
 
-import com.imitee.bleadv.lib.utils.GenericTypeUtils;
-
 import org.freedesktop.dbus.DBusPath;
-import org.freedesktop.dbus.types.UInt16;
 import org.freedesktop.dbus.types.UInt32;
 
 import java.util.function.Function;
@@ -13,7 +10,6 @@ import java.util.function.Function;
  * @create: 2020-05-10 19:55
  **/
 public class DbusConvertAdapter implements ConvertAdapter {
-
 
     @Override
     public Object adaptArg(Class<?> paramType, Object arg) {
@@ -51,11 +47,5 @@ public class DbusConvertAdapter implements ConvertAdapter {
         return actual;
     }
 
-
-
-    public static void main(String[] args) {
-        DBusPath dBusPath = new DBusPath("sa");
-        System.out.println(GenericTypeUtils.isInstance(dBusPath, DBusPath.class));
-    }
 
 }
