@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * @author: luo
  * @create: 2020-05-08 17:55
  **/
-public class BusConnector {
+public class BusConnector implements AutoCloseable{
     private static BusConnector instance = null;
 
     public static BusConnector getInstance() {
@@ -40,6 +40,9 @@ public class BusConnector {
     }
 
     public static void disconnect() {
+        if (instance == null) {
+            return;
+        }
         instance.connection.disconnect();
         instance = null;
     }
@@ -149,5 +152,10 @@ public class BusConnector {
         }
         Class<? extends DBusInterface> value = dbusObject.value();
         return modelMaker.makeObject(rClass, requireObject(path, value));
+    }
+
+    @Override
+    public void close() throws Exception {
+        connection.close();
     }
 }

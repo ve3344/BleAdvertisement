@@ -14,6 +14,7 @@ task javadocJar(type: Jar) {
 group 'com.imitee'
 version '0.0.1'
 
+
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 publishing {
@@ -22,6 +23,8 @@ publishing {
         library(MavenPublication) {
             from components.java
             artifact sourceJar
+
+            artifactId 'bleadv'
         }
     }
     repositories {
