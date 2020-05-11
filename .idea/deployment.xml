@@ -6,6 +6,7 @@
         <serverdata>
           <mappings>
             <mapping deploy="/" local="$PROJECT_DIR$/out/artifacts/BleAdvertisement_jar" web="/" />
+            <mapping deploy="/" local="$PROJECT_DIR$/out/artifacts/BleAdvertisement_adv_main_jar" web="/" />
           </mappings>
         </serverdata>
       </paths>
