@@ -12,7 +12,10 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 //    compile group: 'com.github.hypfvieh', name: 'bluez-dbus', version: '0.1.1'
-    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.26'
-    compile project (':bluez-dbus')
+//    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.26'
+//    compile project (':bluez-dbus')
+    compile 'com.google.code.gson:gson:2.8.5'
+    compile group: 'com.github.hypfvieh', name: 'dbus-java', version: '3.0.2'
+
 
 }

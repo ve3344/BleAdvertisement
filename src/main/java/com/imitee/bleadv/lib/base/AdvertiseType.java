@@ -1,4 +1,4 @@
-package com.imitee.bleadv.lib.advertise;
+package com.imitee.bleadv.lib.base;
 
 public enum AdvertiseType {
     BROADCAST("broadcast"),

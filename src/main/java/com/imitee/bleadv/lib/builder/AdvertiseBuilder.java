@@ -1,14 +1,13 @@
 package com.imitee.bleadv.lib.builder;
 
-import com.github.hypfvieh.bluetooth.wrapper.BluetoothAdapter;
-import com.imitee.bleadv.lib.advertise.AdvertiseType;
+import com.imitee.bleadv.lib.base.AdvertiseType;
 import com.imitee.bleadv.lib.advertise.BleAdvertiser;
 import com.imitee.bleadv.lib.advertise.BleService;
 import com.imitee.bleadv.lib.base.ConnectionListener;
+import com.imitee.bleadv.lib.models.BleAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author: luo
@@ -20,10 +19,10 @@ public class AdvertiseBuilder {
     private final List<ServiceBuilder> serviceBuilders;
 
 
-    public AdvertiseBuilder( String advertiserPath) {
+    public AdvertiseBuilder(BleAdapter adapter, String advertiserPath) {
         this.advertiserPath = advertiserPath;
-        this.bleAdvertiser = new BleAdvertiser( this.advertiserPath);
         this.serviceBuilders=new ArrayList<>();
+        this.bleAdvertiser = new BleAdvertiser( adapter,this.advertiserPath);
 
     }
 
@@ -61,9 +60,9 @@ public class AdvertiseBuilder {
         List<BleService> services = bleAdvertiser.getServices();
         int index=0;
         for (ServiceBuilder serviceBuilder : serviceBuilders) {
-
             String servicePath=advertiserPath + "/service_"+index;
             BleService bleService = serviceBuilder.build(bleAdvertiser,servicePath);
+
             services.add(bleService);
             index++;
         }

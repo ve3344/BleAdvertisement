@@ -1,0 +1,59 @@
+{
+  "/org/bluez/test": {
+    "org.bluez.SimAccessTest1": {},
+    "org.freedesktop.DBus.Introspectable": {}
+  },
+  "/org/bluez/hci0": {
+    "org.bluez.Adapter1": {
+      "Discoverable": "[true]",
+      "DiscoverableTimeout": "[0]",
+      "Address": "[DC:A6:32:6D:D1:70]",
+      "UUIDs": "[[00001112-0000-1000-8000-00805f9b34fb, 13333333-3333-3333-3333-333333333003, 0000110e-0000-1000-8000-00805f9b34fb, 0000112d-0000-1000-8000-00805f9b34fb, 00001106-0000-1000-8000-00805f9b34fb, 00001800-0000-1000-8000-00805f9b34fb, 00001105-0000-1000-8000-00805f9b34fb, 00001200-0000-1000-8000-00805f9b34fb, 0000110c-0000-1000-8000-00805f9b34fb, 00001104-0000-1000-8000-00805f9b34fb, 0000110a-0000-1000-8000-00805f9b34fb, 0000110b-0000-1000-8000-00805f9b34fb, 00001801-0000-1000-8000-00805f9b34fb, 0000111f-0000-1000-8000-00805f9b34fb, 00005005-0000-1000-8000-0002ee000001, 00001133-0000-1000-8000-00805f9b34fb, 0000112f-0000-1000-8000-00805f9b34fb, 00001132-0000-1000-8000-00805f9b34fb, 13333333-3333-3333-3333-333333333001, 00001108-0000-1000-8000-00805f9b34fb]]",
+      "Name": "[raspberrypi]",
+      "Pairable": "[true]",
+      "Modalias": "[usb:v1D6Bp0246d0532]",
+      "Alias": "[hello:1891247302]",
+      "Class": "[6029312]",
+      "PairableTimeout": "[0]",
+      "AddressType": "[public]",
+      "Discovering": "[false]",
+      "Powered": "[true]"
+    },
+    "org.freedesktop.DBus.Properties": {},
+    "org.bluez.LEAdvertisingManager1": {
+      "ActiveInstances": "[1]",
+      "SupportedIncludes": "[[tx-power, appearance, local-name]]",
+      "SupportedInstances": "[4]"
+    },
+    "org.freedesktop.DBus.Introspectable": {},
+    "org.bluez.NetworkServer1": {},
+    "org.bluez.SimAccess1": {
+      "Connected": "[false]"
+    },
+    "org.bluez.GattManager1": {},
+    "org.bluez.Media1": {}
+  },
+  "/org/bluez/hci0/dev_54_DA_32_87_0F_54": {
+    "org.freedesktop.DBus.Properties": {},
+    "org.freedesktop.DBus.Introspectable": {},
+    "org.bluez.Device1": {
+      "LegacyPairing": "[false]",
+      "Address": "[54:DA:32:87:0F:54]",
+      "Paired": "[false]",
+      "Connected": "[true]",
+      "Alias": "[54-DA-32-87-0F-54]",
+      "Adapter": "[/org/bluez/hci0]",
+      "ServicesResolved": "[false]",
+      "AddressType": "[random]",
+      "Trusted": "[false]",
+      "Blocked": "[false]",
+      "UUIDs": "[[]]"
+    }
+  },
+  "/org/bluez": {
+    "org.bluez.HealthManager1": {},
+    "org.bluez.ProfileManager1": {},
+    "org.freedesktop.DBus.Introspectable": {},
+    "org.bluez.AgentManager1": {}
+  }
+}

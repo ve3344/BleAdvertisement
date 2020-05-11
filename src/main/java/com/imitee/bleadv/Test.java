@@ -1,141 +1,161 @@
 package com.imitee.bleadv;
 
 
-import com.github.hypfvieh.bluetooth.wrapper.BluetoothAdapter;
+import com.imitee.bleadv.dbus.adapters.DbusConvertAdapter;
+import com.imitee.bleadv.dbus.core.ModelMaker;
+import com.imitee.bleadv.dbus.test.Tester;
+import com.imitee.bleadv.lib.models.BleAdapter;
 import com.imitee.bleadv.lib.advertise.BleAdvertiser;
-import com.imitee.bleadv.lib.advertise.BleCharacteristic;
-import com.imitee.bleadv.lib.advertise.BleDescriptor;
-import com.imitee.bleadv.lib.advertise.BleService;
-import com.imitee.bleadv.lib.advertise.CharacteristicFlag;
-import com.imitee.bleadv.lib.base.BleCore;
+import com.imitee.bleadv.lib.base.AdvertiseType;
+import com.imitee.bleadv.lib.base.BusConnector;
 import com.imitee.bleadv.lib.base.ConnectionListener;
-import com.imitee.bleadv.lib.base.OptionUtils;
-import com.imitee.bleadv.lib.handlers.ReadDataHandler;
-import com.imitee.bleadv.lib.handlers.WriteDataHandler;
+import com.imitee.bleadv.lib.builder.AdvertiseBuilder;
+import com.imitee.bleadv.lib.builder.CharacteristicBuilder;
+import com.imitee.bleadv.lib.builder.ServiceBuilder;
 
+import org.bluez.Adapter1;
 import org.bluez.Device1;
 import org.freedesktop.Hexdump;
+import org.freedesktop.dbus.exceptions.DBusException;
+import org.freedesktop.dbus.exceptions.DBusExecutionException;
 import org.freedesktop.dbus.types.Variant;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
+
 
 /**
  * @author: luo
  * @create: 2020-05-08 14:19
  **/
 public class Test {
-    public static void main(String[] args) {
+    public static final String SERVICE_UUID1 = "13333333-3333-3333-3333-33333333300a";
+    public static final String SERVICE_UUID2 = "13333333-3333-3333-3333-33333333300b";
+    public static final String SERVICE_UUID3 = "13333333-3333-3333-3333-33333333300c";
+    public static final String CHARACTERISTIC_UUID1 = "13333333-3333-3333-3333-333333333001";
+    public static final String CHARACTERISTIC_UUID2 = "13333333-3333-3333-3333-333333333002";
 
-        BleAdvertiser bleAdvertiser = new BleAdvertiser(Constants.DBUS_OBJECT_BASE);
-
-        bleAdvertiser.disconnectAllDevices();
-        bleAdvertiser.setConnectionListener(new ConnectionListener() {
-            @Override
-            public void onDeviceDiscovered(Device1 dev, Map<String, Variant<?>> options) {
-                System.out.println("onDeviceDiscovered______");
-                OptionUtils.print(options);
-            }
-
-            @Override
-            public void onDeviceRemoved(Device1 dev) {
-            }
-        });
-
-        BleService service = getBleService(bleAdvertiser);
-
-        bleAdvertiser.addService(service);
-        bleAdvertiser.setAdvertiseName("wrqrieuwfhabcjasdgja");
+    public static void main(String[] args) throws DBusException {
 
 
-/*
-        new Thread(() -> {
-            while (true) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                for (BleCharacteristic characteristic : service.getCharacteristics()) {
-                    characteristic.sendNotify(bleAdvertiser.getConnector(), new byte[]{1, 2, 3});
-                }
-            }
-        }).start();
-*/
+        BusConnector.init();
 
-        Scanner scanner = new Scanner(System.in);
+        BusConnector connector = BusConnector.getInstance();
+        List<String> adapters = connector.findAdapters();
 
 
+        Adapter1 adapter1=connector.requireObject(adapters.get(0), Adapter1.class);
+
+        BleAdapter adapter =new ModelMaker()
+                .setConvertAdapter(new DbusConvertAdapter())
+                .makeObject(BleAdapter.class,adapter1);
+
+        //test(adapter);
+
+
+
+
+        BleAdvertiser advertiser = getBuild(adapter);
+
+
+        adapter.setPowered(true);
+        adapter.setDiscoverable(true);
+        adapter.setDiscoverableTimeout(0);
+        advertiser.disconnectAllDevices();
+
+        try {
+            advertiser.startAdvertise();
+        } catch (DBusExecutionException e) {
+            e.printStackTrace();
+        }
+
+        loop();
+
+    }
+
+    private static void loop() {
         while (true) {
-            String line = scanner.nextLine();
-            if ("1".equalsIgnoreCase(line)) {
-                bleAdvertiser.startAdvertise();
-                System.out.println("starting");
-            }
-            if ("2".equalsIgnoreCase(line)) {
-                bleAdvertiser.stopAdvertise();
-                System.out.println("stopping");
 
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
-
     }
 
-    public static byte[] data = new byte[1];
+    private static void test(BleAdapter bleAdapter) throws DBusException {
 
-    static {
-        for (int i = 0; i < data.length; i++) {
-            data[i] = (byte) i;
+        Tester.testCallAll(bleAdapter);
+        System.exit(0);
+    }
+
+    private static BleAdvertiser getBuild(BleAdapter adapter) {
+        return new AdvertiseBuilder(adapter,"/bttest")
+                .addService(new ServiceBuilder(SERVICE_UUID1)
+                        .setPrimary(true)
+                        .addCharacteristic(new CharacteristicBuilder(CHARACTERISTIC_UUID1)
+                                .setReadDataHandler((characteristic, options) -> "hello".getBytes())
+                                .setWriteDataHandler((characteristic, value, options) -> {
+                                    System.out.println("Write:" + Hexdump.toHex(value));
+                                })
+                                .setNotifyHandler(notify -> {
+                                    System.out.println("NotifyChange:" + notify);
+                                })
+                        )
+                        .addCharacteristic(new CharacteristicBuilder(CHARACTERISTIC_UUID2)
+                                .setReadDataHandler((characteristic, options) -> "aa".getBytes())
+                        )
+
+                )
+
+                .addService(new ServiceBuilder(SERVICE_UUID2)
+                        .addCharacteristic(new CharacteristicBuilder(CHARACTERISTIC_UUID2)
+                                .setReadDataHandler((characteristic, options) -> "aa".getBytes())
+                        )
+                        .setPrimary(true)
+                )
+                .setConnectionListener(new ConnectionListener() {
+                    @Override
+                    public void onDeviceDiscovered(Device1 dev, Map<String, Variant<?>> options) {
+                        System.out.println("onDeviceDiscovered");
+                    }
+
+                    @Override
+                    public void onDeviceRemoved(Device1 dev) {
+                        System.out.println("onDeviceRemoved");
+                    }
+                })
+                .setAdvertiseType(AdvertiseType.BROADCAST)
+                .setAdvertiseBleName("adddd")
+                .build();
+    }
+
+    private static void printMap(Map<?, ?> map, int level) {
+        System.out.println("{");
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            for (int i = 0; i < level; i++) {
+                System.out.print("\t");
+            }
+            Object key = entry.getKey();
+            System.out.printf("%-30s -> ", key.toString());
+
+            Object value = entry.getValue();
+            if (value instanceof Map) {
+                printMap((Map) value, level + 1);
+            } else {
+                System.out.print(value.toString());
+            }
+            System.out.println();
+
+
         }
+        System.out.println();
+        for (int i = 0; i < level; i++) {
+            System.out.print("\t");
+        }
+        System.out.println("}");
     }
 
-    private static BleService getBleService(BleAdvertiser bleAdvertiser) {
-        ReadDataHandler read = (characteristic, options) -> {
-            System.out.println("onRead");
-            return data;
-        };
-        WriteDataHandler writeDataHandler = (characteristic1, value, options) -> {
-            System.out.println("onWrite");
-            Hexdump.print(value);
 
-        };
-        BleService service = new BleService(Constants.DBUS_OBJECT_BASE + "/service",
-                Constants.SERVICE_UUID);
-
-
-        BleCharacteristic bleCharacteristic = new BleCharacteristic(
-                service,
-                Constants.DBUS_OBJECT_BASE + "/service/c1",
-                Constants.CHARACTERISTIC_MSG_UUID,
-                CharacteristicFlag.ALL
-        );
-
-        bleCharacteristic.setReadDataHandler(read);
-        bleCharacteristic.setWriteDataHandler(writeDataHandler);
-        service.getCharacteristics().add(bleCharacteristic);
-
-        BleCharacteristic bleCharacteristic2 = new BleCharacteristic(
-                service,
-                Constants.DBUS_OBJECT_BASE + "/service/c2",
-                Constants.CHARACTERISTIC_TIME_UUID,
-                CharacteristicFlag.ALL
-        );
-
-        bleCharacteristic2.setReadDataHandler(read);
-        bleCharacteristic2.setWriteDataHandler(writeDataHandler);
-
-        service.getCharacteristics().add(bleCharacteristic2);
-
-
-        BleDescriptor bleDescriptor = new BleDescriptor(bleCharacteristic2,
-                Constants.DBUS_OBJECT_BASE + "/service/c2/d1",
-                Constants.TIME_DESCRIPTOR_UUID,
-                CharacteristicFlag.READ | CharacteristicFlag.WRITE
-        );
-
-        bleCharacteristic2.getDescriptors().add(bleDescriptor);
-
-
-        return service;
-    }
 }

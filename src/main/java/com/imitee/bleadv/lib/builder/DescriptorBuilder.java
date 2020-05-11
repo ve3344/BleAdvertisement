@@ -2,7 +2,7 @@ package com.imitee.bleadv.lib.builder;
 
 import com.imitee.bleadv.lib.advertise.BleCharacteristic;
 import com.imitee.bleadv.lib.advertise.BleDescriptor;
-import com.imitee.bleadv.lib.advertise.CharacteristicFlag;
+import com.imitee.bleadv.lib.base.CharacteristicFlag;
 import com.imitee.bleadv.lib.handlers.NotifyHandler;
 import com.imitee.bleadv.lib.handlers.ReadDataHandler;
 import com.imitee.bleadv.lib.handlers.WriteDataHandler;
@@ -42,7 +42,8 @@ public class DescriptorBuilder {
         flagsInt |= CharacteristicFlag.WRITE;
         return this;
     }
-    public BleDescriptor build(BleCharacteristic bleCharacteristic, String descriptorPath) {
-        return new BleDescriptor(bleCharacteristic, descriptorPath,uuid, flagsInt);
+     BleDescriptor build(BleCharacteristic bleCharacteristic, String descriptorPath) {
+
+         return new BleDescriptor(bleCharacteristic, descriptorPath,uuid, flagsInt);
     }
 }

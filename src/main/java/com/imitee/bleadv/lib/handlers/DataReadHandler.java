@@ -1,7 +1,7 @@
 package com.imitee.bleadv.lib.handlers;
 
 import com.imitee.bleadv.lib.advertise.BleCharacteristic;
-import com.imitee.bleadv.lib.base.OptionUtils;
+import com.imitee.bleadv.lib.utils.OptionUtils;
 
 import org.freedesktop.dbus.types.Variant;
 

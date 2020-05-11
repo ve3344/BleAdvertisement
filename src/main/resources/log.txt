@@ -1,0 +1,446 @@
+
+ BleAdvertiser{
+ services=[
+  BleService{
+  isPrimary=false
+  objectPath='/bttest/service_0'
+  uuid='13333333-3333-3333-3333-333333333001'
+  characteristics=[
+   BleCharacteristic{
+   objectPath='/bttest/service_0/characteristic_0'
+   uuid='13333333-3333-3333-3333-333333333002'
+   flags=[read, write, notify]
+   descriptors=[]
+}, 
+   BleCharacteristic{
+   objectPath='/bttest/service_0/characteristic_1'
+   uuid='13333333-3333-3333-3333-333333333002'
+   flags=[read]
+   descriptors=[]
+}]
+}, 
+  BleService{
+  isPrimary=false
+  objectPath='/bttest/service_1'
+  uuid='13333333-3333-3333-3333-333333333003'
+  characteristics=[
+   BleCharacteristic{
+   objectPath='/bttest/service_1/characteristic_0'
+   uuid='13333333-3333-3333-3333-333333333002'
+   flags=[read]
+   descriptors=[]
+}]
+}]
+ objectPath='/bttest'
+ advertiseType=BROADCAST
+ advertiseName='adddd'
+}
+-----------------
+{
+/org/bluez                     -> {
+	org.freedesktop.DBus.Introspectable -> {
+
+		}
+
+	org.bluez.AgentManager1        -> {
+
+		}
+
+	org.bluez.ProfileManager1      -> {
+
+		}
+
+	org.bluez.HealthManager1       -> {
+
+		}
+
+
+	}
+
+/org/bluez/test                -> {
+	org.freedesktop.DBus.Introspectable -> {
+
+		}
+
+	org.bluez.SimAccessTest1       -> {
+
+		}
+
+
+	}
+
+/org/bluez/hci0                -> {
+	org.freedesktop.DBus.Introspectable -> {
+
+		}
+
+	org.bluez.Adapter1             -> {
+		Address                        -> [DC:A6:32:6D:D1:70]
+		AddressType                    -> [public]
+		Name                           -> [raspberrypi]
+		Alias                          -> [sdasad]
+		Class                          -> [6029312]
+		Powered                        -> [true]
+		Discoverable                   -> [true]
+		DiscoverableTimeout            -> [0]
+		Pairable                       -> [true]
+		PairableTimeout                -> [0]
+		Discovering                    -> [false]
+		UUIDs                          -> [[00001112-0000-1000-8000-00805f9b34fb, 13333333-3333-3333-3333-333333333003, 0000110e-0000-1000-8000-00805f9b34fb, 0000112d-0000-1000-8000-00805f9b34fb, 00001106-0000-1000-8000-00805f9b34fb, 00001800-0000-1000-8000-00805f9b34fb, 00001105-0000-1000-8000-00805f9b34fb, 00001200-0000-1000-8000-00805f9b34fb, 0000110c-0000-1000-8000-00805f9b34fb, 00001104-0000-1000-8000-00805f9b34fb, 0000110a-0000-1000-8000-00805f9b34fb, 0000110b-0000-1000-8000-00805f9b34fb, 00001801-0000-1000-8000-00805f9b34fb, 0000111f-0000-1000-8000-00805f9b34fb, 00005005-0000-1000-8000-0002ee000001, 00001133-0000-1000-8000-00805f9b34fb, 0000112f-0000-1000-8000-00805f9b34fb, 00001132-0000-1000-8000-00805f9b34fb, 13333333-3333-3333-3333-333333333001, 00001108-0000-1000-8000-00805f9b34fb]]
+		Modalias                       -> [usb:v1D6Bp0246d0532]
+
+		}
+
+	org.freedesktop.DBus.Properties -> {
+
+		}
+
+	org.bluez.GattManager1         -> {
+
+		}
+
+	org.bluez.LEAdvertisingManager1 -> {
+		ActiveInstances                -> [1]
+		SupportedInstances             -> [4]
+		SupportedIncludes              -> [[tx-power, appearance, local-name]]
+
+		}
+
+	org.bluez.Media1               -> {
+
+		}
+
+	org.bluez.NetworkServer1       -> {
+
+		}
+
+	org.bluez.SimAccess1           -> {
+		Connected                      -> [false]
+
+		}
+
+
+	}
+
+
+}
+-----------------
+onDeviceDiscovered
+-----------------
+{
+/org/bluez                     -> {
+	org.freedesktop.DBus.Introspectable -> {
+
+		}
+
+	org.bluez.AgentManager1        -> {
+
+		}
+
+	org.bluez.ProfileManager1      -> {
+
+		}
+
+	org.bluez.HealthManager1       -> {
+
+		}
+
+
+	}
+
+/org/bluez/test                -> {
+	org.freedesktop.DBus.Introspectable -> {
+
+		}
+
+	org.bluez.SimAccessTest1       -> {
+
+		}
+
+
+	}
+
+/org/bluez/hci0                -> {
+	org.freedesktop.DBus.Introspectable -> {
+
+		}
+
+	org.bluez.Adapter1             -> {
+		Address                        -> [DC:A6:32:6D:D1:70]
+		AddressType                    -> [public]
+		Name                           -> [raspberrypi]
+		Alias                          -> [sdasad]
+		Class                          -> [6029312]
+		Powered                        -> [true]
+		Discoverable                   -> [true]
+		DiscoverableTimeout            -> [0]
+		Pairable                       -> [true]
+		PairableTimeout                -> [0]
+		Discovering                    -> [false]
+		UUIDs                          -> [[00001112-0000-1000-8000-00805f9b34fb, 13333333-3333-3333-3333-333333333003, 0000110e-0000-1000-8000-00805f9b34fb, 0000112d-0000-1000-8000-00805f9b34fb, 00001106-0000-1000-8000-00805f9b34fb, 00001800-0000-1000-8000-00805f9b34fb, 00001105-0000-1000-8000-00805f9b34fb, 00001200-0000-1000-8000-00805f9b34fb, 0000110c-0000-1000-8000-00805f9b34fb, 00001104-0000-1000-8000-00805f9b34fb, 0000110a-0000-1000-8000-00805f9b34fb, 0000110b-0000-1000-8000-00805f9b34fb, 00001801-0000-1000-8000-00805f9b34fb, 0000111f-0000-1000-8000-00805f9b34fb, 00005005-0000-1000-8000-0002ee000001, 00001133-0000-1000-8000-00805f9b34fb, 0000112f-0000-1000-8000-00805f9b34fb, 00001132-0000-1000-8000-00805f9b34fb, 13333333-3333-3333-3333-333333333001, 00001108-0000-1000-8000-00805f9b34fb]]
+		Modalias                       -> [usb:v1D6Bp0246d0532]
+
+		}
+
+	org.freedesktop.DBus.Properties -> {
+
+		}
+
+	org.bluez.GattManager1         -> {
+
+		}
+
+	org.bluez.LEAdvertisingManager1 -> {
+		ActiveInstances                -> [1]
+		SupportedInstances             -> [4]
+		SupportedIncludes              -> [[tx-power, appearance, local-name]]
+
+		}
+
+	org.bluez.Media1               -> {
+
+		}
+
+	org.bluez.NetworkServer1       -> {
+
+		}
+
+	org.bluez.SimAccess1           -> {
+		Connected                      -> [false]
+
+		}
+
+
+	}
+
+/org/bluez/hci0/dev_7D_BB_D7_52_6E_2E -> {
+	org.freedesktop.DBus.Introspectable -> {
+
+		}
+
+	org.bluez.Device1              -> {
+		Address                        -> [7D:BB:D7:52:6E:2E]
+		AddressType                    -> [random]
+		Name                           -> [m]
+		Alias                          -> [m]
+		Paired                         -> [false]
+		Trusted                        -> [false]
+		Blocked                        -> [false]
+		LegacyPairing                  -> [false]
+		Connected                      -> [true]
+		UUIDs                          -> [[00001800-0000-1000-8000-00805f9b34fb, 00001801-0000-1000-8000-00805f9b34fb]]
+		Adapter                        -> [/org/bluez/hci0]
+		ServicesResolved               -> [true]
+
+		}
+
+	org.freedesktop.DBus.Properties -> {
+
+		}
+
+
+	}
+
+/org/bluez/hci0/dev_7D_BB_D7_52_6E_2E/service0001 -> {
+	org.freedesktop.DBus.Introspectable -> {
+
+		}
+
+	org.bluez.GattService1         -> {
+		UUID                           -> [00001801-0000-1000-8000-00805f9b34fb]
+		Device                         -> [/org/bluez/hci0/dev_7D_BB_D7_52_6E_2E]
+		Primary                        -> [true]
+		Includes                       -> [[]]
+
+		}
+
+	org.freedesktop.DBus.Properties -> {
+
+		}
+
+
+	}
+
+/org/bluez/hci0/dev_7D_BB_D7_52_6E_2E/service0001/char0002 -> {
+	org.freedesktop.DBus.Introspectable -> {
+
+		}
+
+	org.bluez.GattCharacteristic1  -> {
+		UUID                           -> [00002a05-0000-1000-8000-00805f9b34fb]
+		Service                        -> [/org/bluez/hci0/dev_7D_BB_D7_52_6E_2E/service0001]
+		Value                          -> [[B@3c1e69]
+		Notifying                      -> [false]
+		Flags                          -> [[indicate]]
+
+		}
+
+	org.freedesktop.DBus.Properties -> {
+
+		}
+
+
+	}
+
+
+}
+-----------------
+-----------------
+{
+/org/bluez                     -> {
+	org.freedesktop.DBus.Introspectable -> {
+
+		}
+
+	org.bluez.AgentManager1        -> {
+
+		}
+
+	org.bluez.ProfileManager1      -> {
+
+		}
+
+	org.bluez.HealthManager1       -> {
+
+		}
+
+
+	}
+
+/org/bluez/test                -> {
+	org.freedesktop.DBus.Introspectable -> {
+
+		}
+
+	org.bluez.SimAccessTest1       -> {
+
+		}
+
+
+	}
+
+/org/bluez/hci0                -> {
+	org.freedesktop.DBus.Introspectable -> {
+
+		}
+
+	org.bluez.Adapter1             -> {
+		Address                        -> [DC:A6:32:6D:D1:70]
+		AddressType                    -> [public]
+		Name                           -> [raspberrypi]
+		Alias                          -> [sdasad]
+		Class                          -> [6029312]
+		Powered                        -> [true]
+		Discoverable                   -> [true]
+		DiscoverableTimeout            -> [0]
+		Pairable                       -> [true]
+		PairableTimeout                -> [0]
+		Discovering                    -> [false]
+		UUIDs                          -> [[00001112-0000-1000-8000-00805f9b34fb, 13333333-3333-3333-3333-333333333003, 0000110e-0000-1000-8000-00805f9b34fb, 0000112d-0000-1000-8000-00805f9b34fb, 00001106-0000-1000-8000-00805f9b34fb, 00001800-0000-1000-8000-00805f9b34fb, 00001105-0000-1000-8000-00805f9b34fb, 00001200-0000-1000-8000-00805f9b34fb, 0000110c-0000-1000-8000-00805f9b34fb, 00001104-0000-1000-8000-00805f9b34fb, 0000110a-0000-1000-8000-00805f9b34fb, 0000110b-0000-1000-8000-00805f9b34fb, 00001801-0000-1000-8000-00805f9b34fb, 0000111f-0000-1000-8000-00805f9b34fb, 00005005-0000-1000-8000-0002ee000001, 00001133-0000-1000-8000-00805f9b34fb, 0000112f-0000-1000-8000-00805f9b34fb, 00001132-0000-1000-8000-00805f9b34fb, 13333333-3333-3333-3333-333333333001, 00001108-0000-1000-8000-00805f9b34fb]]
+		Modalias                       -> [usb:v1D6Bp0246d0532]
+
+		}
+
+	org.freedesktop.DBus.Properties -> {
+
+		}
+
+	org.bluez.GattManager1         -> {
+
+		}
+
+	org.bluez.LEAdvertisingManager1 -> {
+		ActiveInstances                -> [1]
+		SupportedInstances             -> [4]
+		SupportedIncludes              -> [[tx-power, appearance, local-name]]
+
+		}
+
+	org.bluez.Media1               -> {
+
+		}
+
+	org.bluez.NetworkServer1       -> {
+
+		}
+
+	org.bluez.SimAccess1           -> {
+		Connected                      -> [false]
+
+		}
+
+
+	}
+
+/org/bluez/hci0/dev_7D_BB_D7_52_6E_2E -> {
+	org.freedesktop.DBus.Introspectable -> {
+
+		}
+
+	org.bluez.Device1              -> {
+		Address                        -> [7D:BB:D7:52:6E:2E]
+		AddressType                    -> [random]
+		Name                           -> [m]
+		Alias                          -> [m]
+		Paired                         -> [false]
+		Trusted                        -> [false]
+		Blocked                        -> [false]
+		LegacyPairing                  -> [false]
+		Connected                      -> [true]
+		UUIDs                          -> [[00001800-0000-1000-8000-00805f9b34fb, 00001801-0000-1000-8000-00805f9b34fb]]
+		Adapter                        -> [/org/bluez/hci0]
+		ServicesResolved               -> [true]
+
+		}
+
+	org.freedesktop.DBus.Properties -> {
+
+		}
+
+
+	}
+
+/org/bluez/hci0/dev_7D_BB_D7_52_6E_2E/service0001 -> {
+	org.freedesktop.DBus.Introspectable -> {
+
+		}
+
+	org.bluez.GattService1         -> {
+		UUID                           -> [00001801-0000-1000-8000-00805f9b34fb]
+		Device                         -> [/org/bluez/hci0/dev_7D_BB_D7_52_6E_2E]
+		Primary                        -> [true]
+		Includes                       -> [[]]
+
+		}
+
+	org.freedesktop.DBus.Properties -> {
+
+		}
+
+
+	}
+
+/org/bluez/hci0/dev_7D_BB_D7_52_6E_2E/service0001/char0002 -> {
+	org.freedesktop.DBus.Introspectable -> {
+
+		}
+
+	org.bluez.GattCharacteristic1  -> {
+		UUID                           -> [00002a05-0000-1000-8000-00805f9b34fb]
+		Service                        -> [/org/bluez/hci0/dev_7D_BB_D7_52_6E_2E/service0001]
+		Value                          -> [[B@a4a92b]
+		Notifying                      -> [false]
+		Flags                          -> [[indicate]]
+
+		}
+
+	org.freedesktop.DBus.Properties -> {
+
+		}
+
+
+	}
+
+
+}
+-----------------

@@ -3,7 +3,7 @@ package com.imitee.bleadv.lib.builder;
 import com.imitee.bleadv.lib.advertise.BleCharacteristic;
 import com.imitee.bleadv.lib.advertise.BleDescriptor;
 import com.imitee.bleadv.lib.advertise.BleService;
-import com.imitee.bleadv.lib.advertise.CharacteristicFlag;
+import com.imitee.bleadv.lib.base.CharacteristicFlag;
 import com.imitee.bleadv.lib.handlers.NotifyHandler;
 import com.imitee.bleadv.lib.handlers.ReadDataHandler;
 import com.imitee.bleadv.lib.handlers.WriteDataHandler;
@@ -28,11 +28,12 @@ public class CharacteristicBuilder {
 
     public CharacteristicBuilder(String uuid) {
         this.uuid = uuid;
-        this.descriptorBuilders=new ArrayList<>();
+        this.descriptorBuilders = new ArrayList<>();
         this.flagsInt = CharacteristicFlag.NONE;
 
     }
-    public CharacteristicBuilder addDescriptor(DescriptorBuilder descriptorBuilder){
+
+    public CharacteristicBuilder addDescriptor(DescriptorBuilder descriptorBuilder) {
         descriptorBuilders.add(descriptorBuilder);
         return this;
     }
@@ -55,15 +56,17 @@ public class CharacteristicBuilder {
         return this;
     }
 
-    public BleCharacteristic build(BleService service, String characteristicsPath) {
+    BleCharacteristic build(BleService service, String characteristicsPath) {
+
         BleCharacteristic bleCharacteristic = new BleCharacteristic(service, characteristicsPath, uuid, flagsInt);
         bleCharacteristic.setNotifyHandler(notifyHandler);
         bleCharacteristic.setWriteDataHandler(writeDataHandler);
         bleCharacteristic.setReadDataHandler(readDataHandler);
         List<BleDescriptor> descriptors = bleCharacteristic.getDescriptors();
-        int index=0;
+        int index = 0;
         for (DescriptorBuilder descriptorBuilder : descriptorBuilders) {
-            String descriptorPath=characteristicsPath+"/descriptor_"+index;
+            String descriptorPath = characteristicsPath + "/descriptor_" + index;
+
             BleDescriptor bleDescriptor = descriptorBuilder.build(bleCharacteristic, descriptorPath);
             descriptors.add(bleDescriptor);
             index++;

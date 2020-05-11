@@ -14,6 +14,8 @@ import org.bluez.LEAdvertisingManager1;
  **/
 public class BleConstants {
     public static final String BUS_BLUEZ = "org.bluez";
+    public static final String BUS_BUSNAME = "org.freedesktop.DBus";
+
     public static final String PATH_OBJ_MANAGER = "/";
 
     public static final String PATH_BLE_ADAPTER = "/org/bluez/hci0";

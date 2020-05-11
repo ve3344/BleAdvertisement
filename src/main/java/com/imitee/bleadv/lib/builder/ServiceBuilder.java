@@ -3,11 +3,9 @@ package com.imitee.bleadv.lib.builder;
 import com.imitee.bleadv.lib.advertise.BleAdvertiser;
 import com.imitee.bleadv.lib.advertise.BleCharacteristic;
 import com.imitee.bleadv.lib.advertise.BleService;
-import com.imitee.bleadv.lib.advertise.CharacteristicFlag;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author: luo
@@ -16,22 +14,32 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ServiceBuilder {
 
     private final String uuid;
+    private boolean isPrimary;
     private final List<CharacteristicBuilder> characteristicBuilders;
 
     public ServiceBuilder(String uuid) {
         this.uuid = uuid;
-        characteristicBuilders=new ArrayList<>();
-    }
-    public void addCharacteristic(CharacteristicBuilder characteristicBuilder){
-        characteristicBuilders.add(characteristicBuilder);
+        characteristicBuilders = new ArrayList<>();
+        isPrimary=false;
     }
 
-    public BleService build(BleAdvertiser advertiser, String servicePath) {
-        BleService bleService = new BleService(servicePath, uuid);
+    public ServiceBuilder addCharacteristic(CharacteristicBuilder characteristicBuilder) {
+        characteristicBuilders.add(characteristicBuilder);
+        return this;
+    }
+
+    public ServiceBuilder setPrimary(boolean primary) {
+        isPrimary = primary;
+        return this;
+    }
+
+    BleService build(BleAdvertiser advertiser, String servicePath) {
+        BleService bleService = new BleService(servicePath, uuid, isPrimary);
         List<BleCharacteristic> characteristics = bleService.getCharacteristics();
-        int index=0;
+        int index = 0;
         for (CharacteristicBuilder characteristicBuilder : characteristicBuilders) {
-            String characteristicsPath=servicePath+"/characteristic_"+index;
+            String characteristicsPath = servicePath + "/characteristic_" + index;
+
             BleCharacteristic bleCharacteristic = characteristicBuilder.build(bleService, characteristicsPath);
             characteristics.add(bleCharacteristic);
             index++;

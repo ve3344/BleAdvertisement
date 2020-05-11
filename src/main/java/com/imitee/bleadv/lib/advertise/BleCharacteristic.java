@@ -2,6 +2,7 @@ package com.imitee.bleadv.lib.advertise;
 
 
 import com.imitee.bleadv.lib.base.BleConstants;
+import com.imitee.bleadv.lib.base.CharacteristicFlag;
 import com.imitee.bleadv.lib.handlers.ReadDataHandler;
 import com.imitee.bleadv.lib.base.BusConnector;
 import com.imitee.bleadv.lib.handlers.NotifyHandler;
@@ -58,17 +59,21 @@ public class BleCharacteristic implements GattCharacteristic1 {
         this.notifying = true;
         this.flags = CharacteristicFlag.makeArray(flagsInt);
 
-        properties = new HashMap<>();
-        properties.put("UUID", new Variant<>(uuid));
-        properties.put("Service", new Variant<>(new DBusPath(parentService.getObjectPath())));
-        properties.put("Value", new Variant<>(value));
-        properties.put("Flags", new Variant<>(flags));
 
-        if (Arrays.asList(flags).contains("notify")) {
-            properties.put("Notifying", new Variant<>(true));
-        }
 
         descriptors = new ArrayList<>();
+    }
+
+    public String[] getFlags() {
+        return flags;
+    }
+
+    public byte[] getValue() {
+        return value;
+    }
+
+    public String getUuid() {
+        return uuid;
     }
 
     public void setNotifyHandler(NotifyHandler notifyHandler) {
@@ -83,6 +88,15 @@ public class BleCharacteristic implements GattCharacteristic1 {
     }
 
     public Map<String, Map<String, Variant<?>>> getProperties() {
+        properties = new HashMap<>();
+        properties.put("UUID", new Variant<>(uuid));
+        properties.put("Service", new Variant<>(new DBusPath(parentService.getObjectPath())));
+        properties.put("Value", new Variant<>(value));
+        properties.put("Flags", new Variant<>(flags));
+
+        if (Arrays.asList(flags).contains("notify")) {
+            properties.put("Notifying", new Variant<>(true));
+        }
         Map<String, Map<String, Variant<?>>> outMap = new HashMap<>();
         outMap.put(THIS_INTERFACE, properties);
 
@@ -205,5 +219,15 @@ public class BleCharacteristic implements GattCharacteristic1 {
     // Server only -  message from client confirming that a value was received
     public void Confirm() throws BluezFailedException {
         System.out.println("Characteristic->confirm received!");
+    }
+
+    @Override
+    public String toString() {
+        return "\n   BleCharacteristic{" +"\n"+
+                "   objectPath='" + objectPath + '\'' +"\n"+
+                "   uuid='" + uuid + '\'' +"\n"+
+                "   flags=" + Arrays.toString(flags) +"\n"+
+                "   descriptors=" + descriptors +"\n"+
+                '}';
     }
 }

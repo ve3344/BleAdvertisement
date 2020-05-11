@@ -1,3 +1,11 @@
+.idea
+backup
+build
+out
+/.gradle
+bluez-dbus
+backup/*
+
 # Compiled class file
 *.class
 

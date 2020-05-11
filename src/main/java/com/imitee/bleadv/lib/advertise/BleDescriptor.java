@@ -1,6 +1,7 @@
 package com.imitee.bleadv.lib.advertise;
 
 import com.imitee.bleadv.lib.base.BleConstants;
+import com.imitee.bleadv.lib.base.CharacteristicFlag;
 
 import org.bluez.GattDescriptor1;
 import org.bluez.exceptions.BluezFailedException;
@@ -12,6 +13,7 @@ import org.bluez.exceptions.BluezNotSupportedException;
 import org.freedesktop.dbus.DBusPath;
 import org.freedesktop.dbus.types.Variant;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -88,5 +90,14 @@ public class BleDescriptor implements GattDescriptor1 {
     }
 
     public <A> void Set(String interface_name, String property_name, A value) {
+    }
+
+    @Override
+    public String toString() {
+        return "\n    BleDescriptor{" +"\n"+
+                "    objectPath='" + objectPath + '\'' +"\n"+
+                "    uuid='" + uuid + '\'' +"\n"+
+                "    flags=" + Arrays.toString(flags) +"\n"+
+                '}';
     }
 }

@@ -1,24 +1,18 @@
 package com.imitee.bleadv.lib.advertise;
 
-import com.github.hypfvieh.DbusHelper;
-import com.github.hypfvieh.bluetooth.wrapper.BluetoothAdapter;
 import com.imitee.bleadv.lib.base.AdvertiseException;
+import com.imitee.bleadv.lib.base.AdvertiseType;
 import com.imitee.bleadv.lib.base.BleConstants;
-import com.imitee.bleadv.lib.base.BleCore;
-import com.imitee.bleadv.lib.base.BleDevice;
 import com.imitee.bleadv.lib.base.BleDiscoveryFilter;
 import com.imitee.bleadv.lib.base.BusConnector;
 import com.imitee.bleadv.lib.base.ConnectionListener;
+import com.imitee.bleadv.lib.models.BleAdapter;
 
 import org.bluez.Device1;
 import org.bluez.GattManager1;
 import org.bluez.LEAdvertisingManager1;
-import org.bluez.exceptions.BluezAlreadyExistsException;
-import org.bluez.exceptions.BluezDoesNotExistException;
 import org.bluez.exceptions.BluezFailedException;
 import org.bluez.exceptions.BluezInvalidArgumentsException;
-import org.bluez.exceptions.BluezInvalidLengthException;
-import org.bluez.exceptions.BluezNotPermittedException;
 import org.bluez.exceptions.BluezNotReadyException;
 import org.bluez.exceptions.BluezNotSupportedException;
 import org.freedesktop.dbus.DBusPath;
@@ -41,7 +35,7 @@ public class BleAdvertiser implements ObjectManager {
     //服务列表
     private final List<BleService> services;
 
-    private final BluetoothAdapter adapter;
+    private final BleAdapter adapter;
     private final BusConnector connector;
     private final String objectPath;
 
@@ -51,26 +45,23 @@ public class BleAdvertiser implements ObjectManager {
     private ConnectionListener connectionListener;
 
 
-    private final GattManager1 gattManager;
-    private final LEAdvertisingManager1 advertisingManager;
-
     private DBusSigHandler<InterfacesAdded> addedHandler;
     private DBusSigHandler<InterfacesRemoved> removedHandler;
     private ObjectManager objectManager;
 
-    public BleAdvertiser(String path) {
-        BluetoothAdapter adapter = BleCore.requireAdapter();
-        adapter.setPowered(true);
-        adapter.setDiscoverable(true);
-        adapter.setDiscoverableTimeout(0);
+    public BleAdvertiser(BleAdapter adapter, String path) {
+
         this.adapter = adapter;
-        this.connector = new BusConnector(adapter.getDbusConnection());
+        this.connector = BusConnector.getInstance();
 
         this.objectPath = path;
         this.services = new ArrayList<>();
 
-        gattManager = connector.requireObject(adapter.getDbusPath(), GattManager1.class);
-        advertisingManager = connector.requireObject(adapter.getDbusPath(), LEAdvertisingManager1.class);
+
+    }
+
+    public BleAdapter getAdapter() {
+        return adapter;
     }
 
     public BusConnector getConnector() {
@@ -97,39 +88,32 @@ public class BleAdvertiser implements ObjectManager {
         return services;
     }
 
-    public Set<String> getConnectedDeviceNodes() {
-        return DbusHelper.findNodes(connector.getConnection(), adapter.getDbusPath());
+    public List<String> getConnectedDeviceNodes() {
+       return connector.findDevices();
     }
 
     public void disconnectAllDevices() {
-        Set<String> deviceNodes = getConnectedDeviceNodes();
-        String adapterPath = adapter.getDbusPath();
-        for (String deviceNode : deviceNodes) {
-            String devicePath = adapterPath + "/" + deviceNode;
-            disconnectDevice(devicePath);
-        }
+        connector.findDevices()
+                .stream()
+                .forEach(path -> {
+                    try {
+                        adapter.removeDevice(new DBusPath(path));
+                    } catch (BluezFailedException | BluezInvalidArgumentsException e) {
+                        e.printStackTrace();
+                    }
+                });
+
     }
 
     public boolean disconnectDevice(String path) {
         try {
-            adapter.removeDeviceByPath(path);
+            adapter.removeDevice(new DBusPath(path));
         } catch (BluezInvalidArgumentsException | BluezFailedException e) {
             e.printStackTrace();
             return false;
         }
         return true;
     }
-
-
-    public void destroy() {
-        stopAdvertise();
-        connector.destroy();
-    }
-
-    public void addService(BleService service) {
-        services.add(service);
-    }
-
 
     public boolean isAdvertising() {
         return advertisement != null;
@@ -141,13 +125,18 @@ public class BleAdvertiser implements ObjectManager {
             return;
         }
 
-        if (services.isEmpty()) {
-            throw new AdvertiseException("Services is empty");
-        }
+        checkValid();
 
         initSignalHandler();
 
-        advertisement = new BleAdvertisement(objectPath + "/advertisement", services, advertiseType, advertiseName);
+        BleService primaryService = services.stream()
+                .filter(BleService::isPrimary)
+                .findFirst()
+                .get();
+        List<BleService> primaryServiceList=new ArrayList<>();
+        primaryServiceList.add(primaryService);
+
+        advertisement = new BleAdvertisement(objectPath + "/advertisement", primaryServiceList, advertiseType, advertiseName);
 
         try {
             exportAll();
@@ -155,20 +144,41 @@ public class BleAdvertiser implements ObjectManager {
             throw new AdvertiseException("Export objects fail", e);
         }
         try {
+            GattManager1 gattManager = connector.requireObject(adapter.getObjectPath(), GattManager1.class);
             gattManager.RegisterApplication(new DBusPath(objectPath), new HashMap<>());
-        } catch (BluezInvalidArgumentsException | BluezAlreadyExistsException e) {
-            throw new AdvertiseException("Add services fail", e);
+        } catch (DBusException e) {
+            throw new AdvertiseException("Register application fail", e);
         }
 
         try {
+            LEAdvertisingManager1 advertisingManager = connector.requireObject(adapter.getObjectPath(), LEAdvertisingManager1.class);
             advertisingManager.RegisterAdvertisement(new DBusPath(advertisement.getObjectPath()), new HashMap<>());
-        } catch (BluezInvalidArgumentsException | BluezAlreadyExistsException | BluezInvalidLengthException
-                | BluezNotPermittedException e) {
+        } catch (DBusException e) {
             throw new AdvertiseException("Register advertise fail", e);
-
         }
     }
 
+    private void checkValid() {
+        if (services.isEmpty()) {
+            throw new AdvertiseException("Services can not be empty!");
+        }
+        boolean hasPrimary = services.stream().anyMatch(BleService::isPrimary);
+
+        if (!hasPrimary){
+            throw new AdvertiseException("Primary service not found!");
+
+        }
+
+        /*for (BleService service : services) {
+            List<BleCharacteristic> characteristics = service.getCharacteristics();
+            for (BleCharacteristic characteristic : characteristics) {
+                if (characteristic.getFlags().length == 0) {
+                    throw new AdvertiseException("Characteristic(uuid=" + characteristic.getUUID() + ") must contains at least one flags ");
+                }
+            }
+
+        }*/
+    }
 
     private void initSignalHandler() {
 
@@ -178,7 +188,7 @@ public class BleAdvertiser implements ObjectManager {
             }
             Map<String, Variant<?>> device = added.getInterfaces().get(BleConstants.TYPE_DEVICE);
             if (device != null) {
-                Device1 object = connector.requireObject(added.getSignalSource(), Device1.class);
+                Device1 object = connector.getObject(added.getSignalSource(), Device1.class);
                 connectionListener.onDeviceDiscovered(object, device);
             }
         };
@@ -190,14 +200,14 @@ public class BleAdvertiser implements ObjectManager {
 
             for (String inters : removed.getInterfaces()) {
                 if (inters.equals(BleConstants.TYPE_DEVICE)) {
-                    Device1 object = connector.requireObject(removed.getSignalSource(), Device1.class);
+                    Device1 object = connector.getObject(removed.getSignalSource(), Device1.class);
                     connectionListener.onDeviceRemoved(object);
                 }
             }
         };
 
-        objectManager = connector.requireObject(BleConstants.PATH_OBJ_MANAGER, ObjectManager.class);
         try {
+            objectManager = connector.requireObjectManager();
             connector.getConnection().addSigHandler(ObjectManager.InterfacesAdded.class, objectManager, addedHandler);
             connector.getConnection().addSigHandler(ObjectManager.InterfacesRemoved.class, objectManager, removedHandler);
         } catch (DBusException e) {
@@ -206,8 +216,8 @@ public class BleAdvertiser implements ObjectManager {
     }
 
     private void removeSignalHandler() throws DBusException {
-        connector.getConnection().removeSigHandler(ObjectManager.InterfacesAdded.class,objectManager, addedHandler);
-        connector.getConnection().removeSigHandler(ObjectManager.InterfacesRemoved.class,objectManager, removedHandler);
+        connector.getConnection().removeSigHandler(ObjectManager.InterfacesAdded.class, objectManager, addedHandler);
+        connector.getConnection().removeSigHandler(ObjectManager.InterfacesRemoved.class, objectManager, removedHandler);
     }
 
     public void stopAdvertise() {
@@ -216,14 +226,17 @@ public class BleAdvertiser implements ObjectManager {
         }
         disconnectAllDevices();
 
+
         try {
+            LEAdvertisingManager1 advertisingManager = connector.requireObject(adapter.getObjectPath(), LEAdvertisingManager1.class);
             advertisingManager.UnregisterAdvertisement(new DBusPath(advertisement.getObjectPath()));
-        } catch (BluezInvalidArgumentsException | BluezDoesNotExistException e) {
+        } catch (DBusException e) {
             throw new AdvertiseException("Unregister advertisement fail", e);
         }
         try {
+            GattManager1 gattManager = connector.requireObject(adapter.getObjectPath(), GattManager1.class);
             gattManager.UnregisterApplication(new DBusPath(objectPath));
-        } catch (BluezInvalidArgumentsException | BluezDoesNotExistException e) {
+        } catch (DBusException e) {
             throw new AdvertiseException("Unregister application fail", e);
         }
         unexportAll();
@@ -279,7 +292,7 @@ public class BleAdvertiser implements ObjectManager {
     public void setDiscoveryFilters(BleDiscoveryFilter... bleDiscoveryFilters) {
         try {
             adapter.setDiscoveryFilter(BleDiscoveryFilter.makeDiscoveryFilterMap(bleDiscoveryFilters));
-        } catch (BluezNotReadyException | BluezNotSupportedException | BluezFailedException | BluezInvalidArgumentsException e) {
+        } catch (BluezNotReadyException | BluezNotSupportedException | BluezFailedException e) {
             throw new RuntimeException("Set discovery filter fail", e);
         }
 
@@ -290,25 +303,9 @@ public class BleAdvertiser implements ObjectManager {
     private void clearDiscoveryFilter() {
         try {
             adapter.setDiscoveryFilter(new HashMap<>());
-        } catch (BluezNotReadyException | BluezNotSupportedException | BluezFailedException | BluezInvalidArgumentsException e) {
+        } catch (BluezNotReadyException | BluezNotSupportedException | BluezFailedException e) {
             e.printStackTrace();
         }
-    }
-
-
-    public List<BleDevice> getConnectedDevices() {
-        List<BleDevice> devices = new ArrayList<>();
-
-
-        Set<String> deviceNodes = getConnectedDeviceNodes();
-        String adapterPath = adapter.getDbusPath();
-        for (String deviceNode : deviceNodes) {
-            String devicePath = adapterPath + "/" + deviceNode;
-            Device1 dev = connector.requireObject(devicePath, Device1.class);
-            devices.add(new BleDevice(dev, connector));
-        }
-
-        return devices;
     }
 
 
@@ -337,5 +334,16 @@ public class BleAdvertiser implements ObjectManager {
     @Override
     public String getObjectPath() {
         return objectPath;
+    }
+
+
+    @Override
+    public String toString() {
+        return "\n BleAdvertiser{" + "\n" +
+                " services=" + services + "\n" +
+                " objectPath='" + objectPath + '\'' + "\n" +
+                " advertiseType=" + advertiseType + "\n" +
+                " advertiseName='" + advertiseName + '\'' + "\n" +
+                '}';
     }
 }
