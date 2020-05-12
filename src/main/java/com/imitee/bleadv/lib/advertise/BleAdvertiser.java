@@ -48,12 +48,12 @@ public class BleAdvertiser implements ObjectManager {
     private DBusSigHandler<InterfacesRemoved> removedHandler;
     private ObjectManager objectManager;
 
-    public BleAdvertiser(BleAdapter adapter, String path) {
+    public BleAdvertiser(BleAdapter adapter, String objectPath) {
 
         this.adapter = adapter;
         this.connector = BusConnector.getInstance();
 
-        this.objectPath = path;
+        this.objectPath = objectPath;
         this.services = new ArrayList<>();
 
 

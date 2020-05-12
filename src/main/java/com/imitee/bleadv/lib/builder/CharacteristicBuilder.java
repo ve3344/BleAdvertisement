@@ -15,10 +15,10 @@ import java.util.List;
  * @author: luo
  * @create: 2020-05-09 13:13
  **/
-public class CharacteristicBuilder {
+public class CharacteristicBuilder implements CharacteristicProvider {
 
     private final String uuid;
-    private final List<DescriptorBuilder> descriptorBuilders;
+    private final List<DescriptorProvider> descriptorProviders;
     private int flagsInt;
 
     private NotifyHandler notifyHandler;
@@ -28,7 +28,7 @@ public class CharacteristicBuilder {
 
     public CharacteristicBuilder(String uuid) {
         this.uuid = uuid;
-        this.descriptorBuilders = new ArrayList<>();
+        this.descriptorProviders = new ArrayList<>();
         this.flagsInt = CharacteristicFlag.NONE;
 
     }
@@ -38,8 +38,8 @@ public class CharacteristicBuilder {
         return this;
     }
 
-    public CharacteristicBuilder addDescriptor(DescriptorBuilder descriptorBuilder) {
-        descriptorBuilders.add(descriptorBuilder);
+    public CharacteristicBuilder addDescriptor(DescriptorProvider descriptorProvider) {
+        descriptorProviders.add(descriptorProvider);
         return this;
     }
 
@@ -61,22 +61,23 @@ public class CharacteristicBuilder {
         return this;
     }
 
-    BleCharacteristic build(BleService service, String characteristicsPath) {
-
-        BleCharacteristic bleCharacteristic = new BleCharacteristic(service, characteristicsPath, uuid, flagsInt);
+    @Override
+    public BleCharacteristic provide(BleService bleService, int characteristicsIndex) {
+        String characteristicsPath = bleService.getObjectPath() + "/characteristic_" + characteristicsIndex;
+        BleCharacteristic bleCharacteristic = new BleCharacteristic(bleService, characteristicsPath, uuid, flagsInt);
         bleCharacteristic.setNotifyHandler(notifyHandler);
         bleCharacteristic.setWriteDataHandler(writeDataHandler);
         bleCharacteristic.setReadDataHandler(readDataHandler);
         List<BleDescriptor> descriptors = bleCharacteristic.getDescriptors();
         int index = 0;
-        for (DescriptorBuilder descriptorBuilder : descriptorBuilders) {
-            String descriptorPath = characteristicsPath + "/descriptor_" + index;
+        for (DescriptorProvider descriptorProvider : descriptorProviders) {
 
-            BleDescriptor bleDescriptor = descriptorBuilder.build(bleCharacteristic, descriptorPath);
+            BleDescriptor bleDescriptor = descriptorProvider.provide(bleCharacteristic, index);
             descriptors.add(bleDescriptor);
             index++;
         }
 
         return bleCharacteristic;
     }
+
 }

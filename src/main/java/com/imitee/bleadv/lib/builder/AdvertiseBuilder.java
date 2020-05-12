@@ -16,12 +16,12 @@ import java.util.List;
 public class AdvertiseBuilder {
     private final BleAdvertiser bleAdvertiser;
     private final String advertiserPath;
-    private final List<ServiceBuilder> serviceBuilders;
+    private final List<ServiceProvider> serviceProviders;
 
 
     public AdvertiseBuilder(BleAdapter adapter, String advertiserPath) {
         this.advertiserPath = advertiserPath;
-        this.serviceBuilders=new ArrayList<>();
+        this.serviceProviders =new ArrayList<>();
         this.bleAdvertiser = new BleAdvertiser( adapter,this.advertiserPath);
 
     }
@@ -42,26 +42,17 @@ public class AdvertiseBuilder {
     }
 
 
-    public AdvertiseBuilder addService(ServiceBuilder serviceBuilder) {
-        serviceBuilders.add(serviceBuilder);
+    public AdvertiseBuilder addService(ServiceProvider serviceProvider) {
+        serviceProviders.add(serviceProvider);
         return this;
     }
 
 
-    BleAdvertiser getBleAdvertiser() {
-        return bleAdvertiser;
-    }
-
-    String getAdvertiserPath() {
-        return advertiserPath;
-    }
-
     public BleAdvertiser build() {
         List<BleService> services = bleAdvertiser.getServices();
         int index=0;
-        for (ServiceBuilder serviceBuilder : serviceBuilders) {
-            String servicePath=advertiserPath + "/service_"+index;
-            BleService bleService = serviceBuilder.build(bleAdvertiser,servicePath);
+        for (ServiceProvider serviceProvider : serviceProviders) {
+            BleService bleService = serviceProvider.provide(bleAdvertiser,index);
 
             services.add(bleService);
             index++;

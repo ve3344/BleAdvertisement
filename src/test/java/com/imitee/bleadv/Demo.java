@@ -93,8 +93,9 @@ public class Demo {
                                 .setWriteDataHandler((characteristic, value, options) -> {
                                     System.out.println("Write:" + Hexdump.toHex(value));
                                 })
-                                .setNotifyHandler(notify -> {
+                                .setNotifyHandler((dBusInterface, notify) -> {
                                     System.out.println("NotifyChange:" + notify);
+
                                 })
                         )
                         .addCharacteristic(new CharacteristicBuilder(CHARACTERISTIC_UUID2)

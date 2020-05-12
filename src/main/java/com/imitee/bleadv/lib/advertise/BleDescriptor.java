@@ -2,6 +2,8 @@ package com.imitee.bleadv.lib.advertise;
 
 import com.imitee.bleadv.lib.base.BleConstants;
 import com.imitee.bleadv.lib.base.CharacteristicFlag;
+import com.imitee.bleadv.lib.handlers.ReadDataHandler;
+import com.imitee.bleadv.lib.handlers.WriteDataHandler;
 
 import org.bluez.GattDescriptor1;
 import org.bluez.exceptions.BluezFailedException;
@@ -16,7 +18,6 @@ import org.freedesktop.dbus.types.Variant;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class BleDescriptor implements GattDescriptor1 {
     private static final String THIS_INTERFACE = BleConstants.TYPE_GATT_DESCRIPTOR;
@@ -25,36 +26,47 @@ public class BleDescriptor implements GattDescriptor1 {
     private final String uuid;
 
     private final String[] flags;
-    private byte[] data;
 
     private Map<String, Variant<?>> properties;
 
-    public BleDescriptor(BleCharacteristic parent, String path, String uuid, int flagsInt) {
+    private ReadDataHandler readDataHandler;
+    private WriteDataHandler writeDataHandler;
+
+    private BleCharacteristic characteristic;
+
+    public BleDescriptor(BleCharacteristic characteristic, String path, String uuid, int flagsInt) {
         this.objectPath = path;
         this.uuid = uuid;
         this.flags = CharacteristicFlag.makeArray(flagsInt);
 
-        data = new byte[0];
+        this.characteristic = characteristic;
 
-        properties = new HashMap<>();
 
-        properties.put("UUID", new Variant<>(uuid));
-        properties.put("Characteristic", new Variant<>(new DBusPath(parent.getObjectPath())));
-        properties.put("Value", new Variant<>(data));
-        properties.put("Flags", new Variant<>(flags));
     }
 
     public void setData(byte[] data) {
-        this.data = data;
         properties.put("Value", new Variant<>(data));
     }
 
     public Map<String, Map<String, Variant<?>>> getProperties() {
+        properties = new HashMap<>();
+
+        properties.put("UUID", new Variant<>(uuid));
+        properties.put("Characteristic", new Variant<>(new DBusPath(characteristic.getObjectPath())));
+        properties.put("Flags", new Variant<>(flags));
         Map<String, Map<String, Variant<?>>> outMap = new HashMap<>();
         outMap.put(THIS_INTERFACE, properties);
         return outMap;
     }
 
+
+    public void setReadDataHandler(ReadDataHandler msgListener) {
+        readDataHandler = msgListener;
+    }
+
+    public void setWriteDataHandler(WriteDataHandler writeDataHandler) {
+        this.writeDataHandler = writeDataHandler;
+    }
 
     public String getUUID() {
         return uuid;
@@ -75,15 +87,24 @@ public class BleDescriptor implements GattDescriptor1 {
     }
 
     @Override
-    public byte[] ReadValue(Map<String, Variant<?>> _flags) throws BluezFailedException, BluezInProgressException,
+    public byte[] ReadValue(Map<String, Variant<?>> options) throws BluezFailedException, BluezInProgressException,
             BluezNotPermittedException, BluezNotAuthorizedException, BluezNotSupportedException {
-        return null;
+        if (readDataHandler == null) {
+            return new byte[0];
+        }
+        byte[] value = readDataHandler.onRead(this, options);
+        setData(value);
+        return value;
     }
 
     @Override
-    public void WriteValue(byte[] _value, Map<String, Variant<?>> _flags)
+    public void WriteValue(byte[] value, Map<String, Variant<?>> options)
             throws BluezFailedException, BluezInProgressException, BluezNotPermittedException,
             BluezInvalidValueLengthException, BluezNotAuthorizedException, BluezNotSupportedException {
+        if (writeDataHandler == null) {
+            return;
+        }
+        writeDataHandler.onWrite(this, value, options);
     }
 
     public <A> A Get(String interface_name, String property_name) {
@@ -97,10 +118,10 @@ public class BleDescriptor implements GattDescriptor1 {
 
     @Override
     public String toString() {
-        return "\n    BleDescriptor{" +"\n"+
-                "    objectPath='" + objectPath + '\'' +"\n"+
-                "    uuid='" + uuid + '\'' +"\n"+
-                "    flags=" + Arrays.toString(flags) +"\n"+
+        return "\n    BleDescriptor{" + "\n" +
+                "    objectPath='" + objectPath + '\'' + "\n" +
+                "    uuid='" + uuid + '\'' + "\n" +
+                "    flags=" + Arrays.toString(flags) + "\n" +
                 '}';
     }
 }

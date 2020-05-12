@@ -3,6 +3,7 @@ package com.imitee.bleadv.lib.handlers;
 import com.imitee.bleadv.lib.advertise.BleCharacteristic;
 import com.imitee.bleadv.lib.utils.OptionUtils;
 
+import org.freedesktop.dbus.interfaces.DBusInterface;
 import org.freedesktop.dbus.types.Variant;
 
 import java.util.Arrays;
@@ -34,7 +35,7 @@ public class DataReadHandler implements ReadDataHandler {
 
 
     @Override
-    public byte[] onRead(BleCharacteristic characteristic, Map<String, Variant<?>> options) {
+    public byte[] onRead(DBusInterface dBusInterface, Map<String, Variant<?>> options) {
         if (dataChange) {
             dataChange = false;
             return data;

@@ -7,28 +7,23 @@ import com.imitee.bleadv.lib.handlers.NotifyHandler;
 import com.imitee.bleadv.lib.handlers.ReadDataHandler;
 import com.imitee.bleadv.lib.handlers.WriteDataHandler;
 
+import java.util.Observable;
+
 /**
  * @author: luo
  * @create: 2020-05-09 16:18
  **/
-public class DescriptorBuilder {
+public class DescriptorBuilder implements DescriptorProvider {
 
     private final String uuid;
     private int flagsInt;
 
-    private NotifyHandler notifyHandler;
     private ReadDataHandler readDataHandler;
     private WriteDataHandler writeDataHandler;
 
     public DescriptorBuilder(String uuid) {
         this.uuid = uuid;
         this.flagsInt = CharacteristicFlag.NONE;
-    }
-
-    public DescriptorBuilder setNotifyHandler(NotifyHandler notifyHandler) {
-        this.notifyHandler = notifyHandler;
-        flagsInt |= CharacteristicFlag.NOTIFY;
-        return this;
     }
 
     public DescriptorBuilder setReadDataHandler(ReadDataHandler readDataHandler) {
@@ -42,8 +37,21 @@ public class DescriptorBuilder {
         flagsInt |= CharacteristicFlag.WRITE;
         return this;
     }
-     BleDescriptor build(BleCharacteristic bleCharacteristic, String descriptorPath) {
 
-         return new BleDescriptor(bleCharacteristic, descriptorPath,uuid, flagsInt);
+    public DescriptorBuilder overrideFlags(int flagsInt) {
+        this.flagsInt = flagsInt;
+        return this;
     }
+
+    @Override
+    public BleDescriptor provide(BleCharacteristic bleCharacteristic, int descriptorIndex) {
+        String descriptorPath = bleCharacteristic.getObjectPath() + "/descriptor_" + descriptorIndex;
+        BleDescriptor bleDescriptor = new BleDescriptor(bleCharacteristic, descriptorPath, uuid, flagsInt);
+        bleDescriptor.setReadDataHandler(readDataHandler);
+        bleDescriptor.setWriteDataHandler(writeDataHandler);
+        return bleDescriptor;
+
+    }
+
+
 }

@@ -162,7 +162,7 @@ public class BleCharacteristic implements GattCharacteristic1 {
         }
         notifying = notify;
         if (notifyHandler != null) {
-            notifyHandler.onNotifyChange(notifying);
+            notifyHandler.onNotifyChange(this,notifying);
         }
     }
 
