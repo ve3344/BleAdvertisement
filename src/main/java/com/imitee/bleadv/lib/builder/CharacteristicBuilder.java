@@ -33,6 +33,11 @@ public class CharacteristicBuilder {
 
     }
 
+    public CharacteristicBuilder overrideFlags(int flagsInt) {
+        this.flagsInt = flagsInt;
+        return this;
+    }
+
     public CharacteristicBuilder addDescriptor(DescriptorBuilder descriptorBuilder) {
         descriptorBuilders.add(descriptorBuilder);
         return this;
