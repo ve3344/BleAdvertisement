@@ -2,7 +2,7 @@ package com.imitee.bleadv.lib.advertise;
 
 
 import com.imitee.bleadv.lib.base.BleConstants;
-import com.imitee.bleadv.lib.base.CharacteristicFlag;
+import com.imitee.bleadv.lib.base.BleFlags;
 import com.imitee.bleadv.lib.handlers.ReadDataHandler;
 import com.imitee.bleadv.lib.base.BusConnector;
 import com.imitee.bleadv.lib.handlers.NotifyHandler;
@@ -57,7 +57,7 @@ public class BleCharacteristic implements GattCharacteristic1 {
         this.value = new byte[0];
         this.uuid = uuid;
         this.notifying = true;
-        this.flags = CharacteristicFlag.makeArray(flagsInt);
+        this.flags = BleFlags.makeArray(flagsInt);
         this.descriptors = new ArrayList<>();
     }
 

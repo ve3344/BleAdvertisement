@@ -1,7 +1,7 @@
 package com.imitee.bleadv.lib.advertise;
 
 import com.imitee.bleadv.lib.base.BleConstants;
-import com.imitee.bleadv.lib.base.CharacteristicFlag;
+import com.imitee.bleadv.lib.base.BleFlags;
 import com.imitee.bleadv.lib.handlers.ReadDataHandler;
 import com.imitee.bleadv.lib.handlers.WriteDataHandler;
 
@@ -37,7 +37,7 @@ public class BleDescriptor implements GattDescriptor1 {
     public BleDescriptor(BleCharacteristic characteristic, String path, String uuid, int flagsInt) {
         this.objectPath = path;
         this.uuid = uuid;
-        this.flags = CharacteristicFlag.makeArray(flagsInt);
+        this.flags = BleFlags.makeArray(flagsInt);
 
         this.characteristic = characteristic;
 

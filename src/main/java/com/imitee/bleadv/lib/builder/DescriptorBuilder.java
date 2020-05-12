@@ -2,12 +2,9 @@ package com.imitee.bleadv.lib.builder;
 
 import com.imitee.bleadv.lib.advertise.BleCharacteristic;
 import com.imitee.bleadv.lib.advertise.BleDescriptor;
-import com.imitee.bleadv.lib.base.CharacteristicFlag;
-import com.imitee.bleadv.lib.handlers.NotifyHandler;
+import com.imitee.bleadv.lib.base.BleFlags;
 import com.imitee.bleadv.lib.handlers.ReadDataHandler;
 import com.imitee.bleadv.lib.handlers.WriteDataHandler;
-
-import java.util.Observable;
 
 /**
  * @author: luo
@@ -23,18 +20,18 @@ public class DescriptorBuilder implements DescriptorProvider {
 
     public DescriptorBuilder(String uuid) {
         this.uuid = uuid;
-        this.flagsInt = CharacteristicFlag.NONE;
+        this.flagsInt = BleFlags.NONE;
     }
 
     public DescriptorBuilder setReadDataHandler(ReadDataHandler readDataHandler) {
         this.readDataHandler = readDataHandler;
-        flagsInt |= CharacteristicFlag.READ;
+        flagsInt |= BleFlags.READ;
         return this;
     }
 
     public DescriptorBuilder setWriteDataHandler(WriteDataHandler writeDataHandler) {
         this.writeDataHandler = writeDataHandler;
-        flagsInt |= CharacteristicFlag.WRITE;
+        flagsInt |= BleFlags.WRITE;
         return this;
     }
 

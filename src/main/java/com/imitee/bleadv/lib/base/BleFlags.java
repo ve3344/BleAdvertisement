@@ -7,7 +7,7 @@ import java.util.List;
  * @author: luo
  * @create: 2020-05-08 20:49
  **/
-public class CharacteristicFlag {
+public class BleFlags {
     public static final String[] FLAGS_STRING = {
             "read",
             "write",

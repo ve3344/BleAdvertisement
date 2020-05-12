@@ -3,7 +3,7 @@ package com.imitee.bleadv.lib.builder;
 import com.imitee.bleadv.lib.advertise.BleCharacteristic;
 import com.imitee.bleadv.lib.advertise.BleDescriptor;
 import com.imitee.bleadv.lib.advertise.BleService;
-import com.imitee.bleadv.lib.base.CharacteristicFlag;
+import com.imitee.bleadv.lib.base.BleFlags;
 import com.imitee.bleadv.lib.handlers.NotifyHandler;
 import com.imitee.bleadv.lib.handlers.ReadDataHandler;
 import com.imitee.bleadv.lib.handlers.WriteDataHandler;
@@ -29,7 +29,7 @@ public class CharacteristicBuilder implements CharacteristicProvider {
     public CharacteristicBuilder(String uuid) {
         this.uuid = uuid;
         this.descriptorProviders = new ArrayList<>();
-        this.flagsInt = CharacteristicFlag.NONE;
+        this.flagsInt = BleFlags.NONE;
 
     }
 
@@ -45,19 +45,19 @@ public class CharacteristicBuilder implements CharacteristicProvider {
 
     public CharacteristicBuilder setNotifyHandler(NotifyHandler notifyHandler) {
         this.notifyHandler = notifyHandler;
-        flagsInt |= CharacteristicFlag.NOTIFY;
+        flagsInt |= BleFlags.NOTIFY;
         return this;
     }
 
     public CharacteristicBuilder setReadDataHandler(ReadDataHandler readDataHandler) {
         this.readDataHandler = readDataHandler;
-        flagsInt |= CharacteristicFlag.READ;
+        flagsInt |= BleFlags.READ;
         return this;
     }
 
     public CharacteristicBuilder setWriteDataHandler(WriteDataHandler writeDataHandler) {
         this.writeDataHandler = writeDataHandler;
-        flagsInt |= CharacteristicFlag.WRITE;
+        flagsInt |= BleFlags.WRITE;
         return this;
     }
 
