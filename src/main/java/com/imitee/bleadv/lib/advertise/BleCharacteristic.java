@@ -100,14 +100,14 @@ public class BleCharacteristic implements GattCharacteristic1 {
         return outMap;
     }
 
-    public void sendNotify(BusConnector db, byte[] data) {
+    public void sendNotify(byte[] data) {
         try {
             Map<String, Variant<?>> val = new HashMap<>();
             val.put("Value", new Variant<>(data));
 
             Properties.PropertiesChanged signal = new Properties.PropertiesChanged(objectPath, THIS_INTERFACE, val, new ArrayList<>());
 
-            db.getConnection().sendMessage(signal);
+            BusConnector.getInstance().getConnection().sendMessage(signal);
         } catch (DBusException e) {
             e.printStackTrace();
         }
