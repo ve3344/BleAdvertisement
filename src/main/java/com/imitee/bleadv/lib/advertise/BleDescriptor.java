@@ -16,6 +16,7 @@ import org.freedesktop.dbus.types.Variant;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class BleDescriptor implements GattDescriptor1 {
     private static final String THIS_INTERFACE = BleConstants.TYPE_GATT_DESCRIPTOR;
@@ -86,10 +87,12 @@ public class BleDescriptor implements GattDescriptor1 {
     }
 
     public <A> A Get(String interface_name, String property_name) {
+        System.out.println("Get");
         return null;
     }
 
     public <A> void Set(String interface_name, String property_name, A value) {
+        System.out.println("Set");
     }
 
     @Override

@@ -58,10 +58,7 @@ public class BleCharacteristic implements GattCharacteristic1 {
         this.uuid = uuid;
         this.notifying = true;
         this.flags = CharacteristicFlag.makeArray(flagsInt);
-
-
-
-        descriptors = new ArrayList<>();
+        this.descriptors = new ArrayList<>();
     }
 
     public String[] getFlags() {
@@ -193,32 +190,29 @@ public class BleCharacteristic implements GattCharacteristic1 {
         writeDataHandler.onWrite(this, value,options);
     }
 
-    // TODO: might need to implement some of these?
-    // If not, don't make them part of the interface when we add our own interface implementations
     public TwoTuple<FileDescriptor, UInt16> AcquireWrite(Map<String, Variant<?>> _options)
             throws BluezFailedException, BluezNotSupportedException {
-        System.out.println("AcquireWrite called!");
+        System.out.println("AcquireWrite");
         return null;
     }
 
     public TwoTuple<FileDescriptor, UInt16> AcquireNotify(Map<String, Variant<?>> _options)
             throws BluezFailedException, BluezNotSupportedException {
-        System.out.println("AcquireNotify called!");
+        System.out.println("AcquireNotify");
         return null;
     }
 
     public <A> A Get(String interface_name, String property_name) {
-        System.out.println("Characteristic->Get() called!");
+        System.out.println("Get");
         return null;
     }
 
     public <A> void Set(String interface_name, String property_name, A value) {
-        System.out.println("Characteristic->Set() called!");
+        System.out.println("Set");
     }
 
-    // Server only -  message from client confirming that a value was received
     public void Confirm() throws BluezFailedException {
-        System.out.println("Characteristic->confirm received!");
+        System.out.println("Confirm");
     }
 
     @Override

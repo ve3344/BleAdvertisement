@@ -8,12 +8,13 @@
 - 设置蓝牙名称
 - 监听连接和断开
 - 添加 多个Service，Characteristic，Descriptor
+- 支持read，write，notify
 - 支持长数据读取写入
 
 # 待实现
 - 扫描别的蓝牙设备
 - 连接别的蓝牙设备
-
+- indicate ,write no response 的兼容
 # 依赖
 
 ```bash

@@ -75,9 +75,11 @@ public class BleService implements GattService1 {
 	}
 
 	public <A> A Get(String interface_name, String property_name) {
+		System.out.println("Get");
 		return null;
 	}
 	public <A> void Set(String interface_name, String property_name, A value) {
+		System.out.println("Set");
 	}
 
 	@Override
