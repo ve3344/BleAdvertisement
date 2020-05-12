@@ -182,7 +182,7 @@ public class BleAdvertiser implements ObjectManager {
             if (connectionListener == null) {
                 return;
             }
-            Map<String, Variant<?>> device = added.getInterfaces().get(BleConstants.TYPE_DEVICE);
+            Map<String, Variant<?>> device = added.getInterfaces().get(Device1.class.getName());
             if (device != null) {
                 Device1 object = connector.getObject(added.getSignalSource(), Device1.class);
                 connectionListener.onDeviceConnected(object, device);
@@ -195,7 +195,7 @@ public class BleAdvertiser implements ObjectManager {
             }
 
             for (String inters : removed.getInterfaces()) {
-                if (inters.equals(BleConstants.TYPE_DEVICE)) {
+                if (inters.equals(Device1.class.getName())) {
                     Device1 object = connector.getObject(removed.getSignalSource(), Device1.class);
                     connectionListener.onDeviceDisconnected(object);
                 }

@@ -105,7 +105,7 @@ public class BleCharacteristic implements GattCharacteristic1 {
             Map<String, Variant<?>> val = new HashMap<>();
             val.put("Value", new Variant<>(data));
 
-            Properties.PropertiesChanged signal = new Properties.PropertiesChanged(objectPath, THIS_INTERFACE, val, new ArrayList<String>());
+            Properties.PropertiesChanged signal = new Properties.PropertiesChanged(objectPath, THIS_INTERFACE, val, new ArrayList<>());
 
             db.getConnection().sendMessage(signal);
         } catch (DBusException e) {
