@@ -9,16 +9,14 @@ import com.imitee.bleadv.lib.base.BusConnector;
  **/
 public class AutoDataReadHandler extends DataReadHandler {
    private final BleCharacteristic characteristic;
-   private final BusConnector connector;
 
 
-    public AutoDataReadHandler(BleCharacteristic characteristic, BusConnector connector) {
+    public AutoDataReadHandler(BleCharacteristic characteristic) {
         this.characteristic = characteristic;
-        this.connector = connector;
     }
 
     public void setDataAndNotify(byte[] data) {
         super.setData(data);
-        characteristic.sendNotify(connector, data);
+        characteristic.sendNotify( data);
     }
 }
