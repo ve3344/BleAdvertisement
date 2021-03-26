@@ -3,6 +3,7 @@ package com.imitee.bleadv.lib.advertise;
 
 import com.imitee.bleadv.lib.base.BleConstants;
 import com.imitee.bleadv.lib.base.BleFlags;
+import com.imitee.bleadv.lib.base.Notifiable;
 import com.imitee.bleadv.lib.handlers.ReadDataHandler;
 import com.imitee.bleadv.lib.base.BusConnector;
 import com.imitee.bleadv.lib.handlers.NotifyHandler;
@@ -33,7 +34,7 @@ import java.util.Map;
 /*
  * Local BLE characteristic
  */
-public class BleCharacteristic implements GattCharacteristic1 {
+public class BleCharacteristic implements GattCharacteristic1 , Notifiable {
     public static final String THIS_INTERFACE = BleConstants.TYPE_GATT_CHARACTERISTIC;
 
     private final String objectPath;
@@ -100,6 +101,7 @@ public class BleCharacteristic implements GattCharacteristic1 {
         return outMap;
     }
 
+    @Override
     public void sendNotify(byte[] data) {
         try {
             Map<String, Variant<?>> val = new HashMap<>();
@@ -153,7 +155,7 @@ public class BleCharacteristic implements GattCharacteristic1 {
 
     @Override
     public void StopNotify() throws BluezFailedException {
-        changeNotify(true);
+        changeNotify(false);
     }
 
     private void changeNotify(boolean notify) {

@@ -24,6 +24,7 @@ public class CharacteristicBuilder implements CharacteristicProvider {
     private NotifyHandler notifyHandler;
     private ReadDataHandler readDataHandler;
     private WriteDataHandler writeDataHandler;
+    private ModelCreateListener<BleDescriptor> createListener;
 
 
     public CharacteristicBuilder(String uuid) {
@@ -31,6 +32,11 @@ public class CharacteristicBuilder implements CharacteristicProvider {
         this.descriptorProviders = new ArrayList<>();
         this.flagsInt = BleFlags.NONE;
 
+    }
+
+    public CharacteristicBuilder setCreateListener(ModelCreateListener<BleDescriptor> createListener) {
+        this.createListener = createListener;
+        return this;
     }
 
     public CharacteristicBuilder overrideFlags(int flagsInt) {
@@ -68,11 +74,14 @@ public class CharacteristicBuilder implements CharacteristicProvider {
         bleCharacteristic.setNotifyHandler(notifyHandler);
         bleCharacteristic.setWriteDataHandler(writeDataHandler);
         bleCharacteristic.setReadDataHandler(readDataHandler);
+
         List<BleDescriptor> descriptors = bleCharacteristic.getDescriptors();
         int index = 0;
         for (DescriptorProvider descriptorProvider : descriptorProviders) {
-
             BleDescriptor bleDescriptor = descriptorProvider.provide(bleCharacteristic, index);
+            if (createListener != null) {
+                createListener.onModelCreate(bleDescriptor);
+            }
             descriptors.add(bleDescriptor);
             index++;
         }

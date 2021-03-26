@@ -16,11 +16,17 @@ public class ServiceBuilder implements ServiceProvider {
     private final String uuid;
     private boolean isPrimary;
     private final List<CharacteristicProvider> characteristicProviders;
+    private ModelCreateListener<BleCharacteristic> createListener;
 
     public ServiceBuilder(String uuid) {
         this.uuid = uuid;
         characteristicProviders = new ArrayList<>();
         isPrimary = false;
+    }
+
+    public ServiceBuilder setCreateListener(ModelCreateListener<BleCharacteristic> createListener) {
+        this.createListener = createListener;
+        return this;
     }
 
     public ServiceBuilder addCharacteristic(CharacteristicProvider characteristicProvider) {
@@ -41,8 +47,10 @@ public class ServiceBuilder implements ServiceProvider {
         List<BleCharacteristic> characteristics = bleService.getCharacteristics();
         int index = 0;
         for (CharacteristicProvider characteristicProvider : characteristicProviders) {
-
             BleCharacteristic bleCharacteristic = characteristicProvider.provide(bleService, index);
+            if (createListener != null) {
+                createListener.onModelCreate(bleCharacteristic);
+            }
             characteristics.add(bleCharacteristic);
             index++;
         }

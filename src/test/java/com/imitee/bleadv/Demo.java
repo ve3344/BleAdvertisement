@@ -3,6 +3,8 @@ package com.imitee.bleadv;
 
 import com.imitee.bleadv.dbus.test.Tester;
 import com.imitee.bleadv.lib.advertise.BleAdvertiser;
+import com.imitee.bleadv.lib.advertise.BleCharacteristic;
+import com.imitee.bleadv.lib.advertise.BleService;
 import com.imitee.bleadv.lib.base.AdvertiseType;
 import com.imitee.bleadv.lib.base.BusConnector;
 import com.imitee.bleadv.lib.base.ConnectionListener;
@@ -44,7 +46,7 @@ public class Demo {
 
         BleAdapter adapter = connector.makeModel(BleAdapter.class, adapters.get(0));
 
-        BleAdvertiser advertiser = getBuild(connector, adapter);
+        BleAdvertiser advertiser = buildAdvertiser(connector, adapter);
 
 
         adapter.setPowered(true);
@@ -52,6 +54,11 @@ public class Demo {
         adapter.setDiscoverableTimeout(0);
         advertiser.disconnectAllDevices();
 
+        for (BleService service : advertiser.getServices()) {
+            for (BleCharacteristic characteristic : service.getCharacteristics()) {
+                characteristic.sendNotify(new byte[]{0x00,0x01});
+            }
+        }
 
         try {
             advertiser.startAdvertise();
@@ -65,7 +72,6 @@ public class Demo {
 
     private static void loop() {
         while (true) {
-
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -84,7 +90,7 @@ public class Demo {
         System.exit(0);
     }
 
-    private static BleAdvertiser getBuild(BusConnector connector, BleAdapter adapter) {
+    private static BleAdvertiser buildAdvertiser(BusConnector connector, BleAdapter adapter) {
         return new AdvertiseBuilder(adapter, "/bttest")
                 .addService(new ServiceBuilder(SERVICE_UUID1)
                         .setPrimary(true)
@@ -95,15 +101,13 @@ public class Demo {
                                 })
                                 .setNotifyHandler((dBusInterface, notify) -> {
                                     System.out.println("NotifyChange:" + notify);
-
                                 })
+
                         )
                         .addCharacteristic(new CharacteristicBuilder(CHARACTERISTIC_UUID2)
                                 .setReadDataHandler((characteristic, options) -> "aa".getBytes())
                         )
-
                 )
-
                 .addService(new ServiceBuilder(SERVICE_UUID2)
                         .addCharacteristic(new CharacteristicBuilder(CHARACTERISTIC_UUID2)
                                 .setReadDataHandler((characteristic, options) -> "aa".getBytes())
@@ -117,9 +121,7 @@ public class Demo {
                         BleDevice bleDevice = null;
                         try {
                             bleDevice = connector.makeModel(BleDevice.class, dev);
-
                             System.out.println(JsonUtils.mapToJson(connector.getManagedObjects()));
-
                         } catch (DBusException e) {
                             e.printStackTrace();
                         }

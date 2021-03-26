@@ -1,8 +1,8 @@
 package com.imitee.bleadv.lib.builder;
 
-import com.imitee.bleadv.lib.base.AdvertiseType;
 import com.imitee.bleadv.lib.advertise.BleAdvertiser;
 import com.imitee.bleadv.lib.advertise.BleService;
+import com.imitee.bleadv.lib.base.AdvertiseType;
 import com.imitee.bleadv.lib.base.ConnectionListener;
 import com.imitee.bleadv.lib.models.BleAdapter;
 
@@ -17,13 +17,19 @@ public class AdvertiseBuilder {
     private final BleAdvertiser bleAdvertiser;
     private final String advertiserPath;
     private final List<ServiceProvider> serviceProviders;
+    private ModelCreateListener<BleService> createListener;
 
 
     public AdvertiseBuilder(BleAdapter adapter, String advertiserPath) {
         this.advertiserPath = advertiserPath;
-        this.serviceProviders =new ArrayList<>();
-        this.bleAdvertiser = new BleAdvertiser( adapter,this.advertiserPath);
+        this.serviceProviders = new ArrayList<>();
+        this.bleAdvertiser = new BleAdvertiser(adapter, this.advertiserPath);
 
+    }
+
+    public AdvertiseBuilder setCreateListener(ModelCreateListener<BleService> createListener) {
+        this.createListener = createListener;
+        return this;
     }
 
     public AdvertiseBuilder setAdvertiseType(AdvertiseType advertiseType) {
@@ -50,10 +56,12 @@ public class AdvertiseBuilder {
 
     public BleAdvertiser build() {
         List<BleService> services = bleAdvertiser.getServices();
-        int index=0;
+        int index = 0;
         for (ServiceProvider serviceProvider : serviceProviders) {
-            BleService bleService = serviceProvider.provide(bleAdvertiser,index);
-
+            BleService bleService = serviceProvider.provide(bleAdvertiser, index);
+            if (createListener != null) {
+                createListener.onModelCreate(bleService);
+            }
             services.add(bleService);
             index++;
         }
